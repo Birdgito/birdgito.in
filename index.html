@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Birdgito.in — Pankaj Mishra</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* ── THEMES ─────────────────────────────────────────────── */
+:root {
+  --accent:      #00ff88;
+  --accent-dim:  #00cc66;
+  --accent-glow: rgba(0,255,136,0.16);
+  --amber: #ffb700; --cyan: #00e5ff;
+  --red:   #ff4757; --purple: #c792ea;
+  --bg:  #080c08; --bg2: #0b100b; --bg3: #0f160f;
+  --border: #182818; --dim: #3a5a3a;
+}
+body[data-theme="amber"] {
+  --accent: #ffb700; --accent-dim: #cc9200;
+  --accent-glow: rgba(255,183,0,0.14);
+  --bg: #0c0a04; --bg2: #100e06; --bg3: #141008;
+  --border: #2a2210; --dim: #5a4a20;
+}
+body[data-theme="cyan"] {
+  --accent: #00e5ff; --accent-dim: #00b8cc;
+  --accent-glow: rgba(0,229,255,0.14);
+  --bg: #030c0e; --bg2: #051014; --bg3: #071418;
+  --border: #0e2830; --dim: #1a4a58;
+}
+
+/* ── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background:var(--bg); color:var(--accent);
+  font-family:'JetBrains Mono',monospace;
+  min-height:100vh; overflow-x:hidden; cursor:text;
+  transition:background .4s,color .4s;
+}
+
+/* Scanlines */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);
+}
+/* Vignette */
+body::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:9998;
+  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65) 100%);
+}
+
+/* ── BOOT ───────────────────────────────────────────────── */
+#boot-screen {
+  position:fixed; inset:0; background:#000;
+  z-index:9000; padding:28px 32px; overflow:hidden;
+  transition:opacity .7s ease;
+}
+#boot-screen.fade-out { opacity:0; pointer-events:none; }
+.boot-line {
+  font-family:'Share Tech Mono',monospace;
+  font-size:13px; line-height:1.65; color:#444;
+  opacity:0; animation:bRev .04s forwards;
+}
+.boot-line.ok{color:#00ff88;} .boot-line.warn{color:#ffb700;}
+.boot-line.info{color:#00e5ff;} .boot-line.bright{color:#999;}
+@keyframes bRev{to{opacity:1;}}
+
+/* ── TERMINAL ───────────────────────────────────────────── */
+#terminal { display:none; flex-direction:column; min-height:100vh; max-width:1000px; margin:0 auto; padding-bottom:165px; }
+#terminal.visible { display:flex; }
+
+.term-bar {
+  display:flex; align-items:center; gap:8px; padding:9px 16px;
+  background:var(--bg2); border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:300;
+}
+.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.dot.r{background:#ff5f57;cursor:pointer;}
+.dot.y{background:#febc2e;}
+.dot.g{background:#28c840;}
+.term-title{margin-left:auto;font-size:11px;color:var(--dim);letter-spacing:2px;display:flex;align-items:center;gap:12px;}
+.theme-btns{display:flex;gap:6px;}
+.tb{width:14px;height:14px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .2s,border-color .2s;}
+.tb:hover{transform:scale(1.3);}
+.tb.active{border-color:#fff;}
+.tb-g{background:#00ff88;} .tb-a{background:#ffb700;} .tb-c{background:#00e5ff;}
+
+/* ASCII banner */
+#ascii-banner {
+  padding:24px 20px 0; white-space:pre;
+  font-size:clamp(6px,1.15vw,12px); line-height:1.3;
+  color:var(--accent); font-family:'Share Tech Mono',monospace;
+  text-shadow:0 0 14px var(--accent-glow);
+  animation:flicker 5s infinite;
+}
+@keyframes flicker{0%,94%,100%{opacity:1;}95%{opacity:.8;}96%{opacity:1;}97%{opacity:.85;}}
+
+/* Welcome */
+.welcome-block {
+  margin:10px 20px; padding:14px 18px;
+  font-size:12px; line-height:1.9;
+  border-left:2px solid var(--accent-dim);
+  background:var(--accent-glow); color:#7aad7a;
+}
+.welcome-block .wn{color:var(--accent);font-weight:700;font-size:14px;}
+.welcome-block a{color:var(--cyan);text-decoration:none;}
+.welcome-block a:hover{text-decoration:underline;}
+
+/* Output */
+#output{flex:1;padding:8px 20px;}
+.cmd-block{margin-bottom:16px;}
+.prompt-line{display:flex;align-items:center;flex-wrap:wrap;font-size:14px;line-height:1.6;}
+.p-user{color:var(--accent);font-weight:700;}
+.p-at{color:var(--accent-dim);}
+.p-host{color:var(--cyan);font-weight:700;}
+.p-colon{color:var(--accent-dim);}
+.p-path{color:var(--amber);}
+.p-dollar{color:#aaa;margin:0 6px;}
+.p-cmd{color:#fff;}
+.cmd-output{margin-top:7px;font-size:13px;line-height:1.85;padding-left:12px;border-left:1px solid var(--border);}
+
+/* ── AUTOCOMPLETE ────────────────────────────────────────── */
+#autocomplete {
+  display:none; position:fixed;
+  background:var(--bg3); border:1px solid var(--accent-dim);
+  border-radius:4px; z-index:600; min-width:260px;
+  box-shadow:0 4px 24px rgba(0,0,0,.7);
+  max-height:230px; overflow-y:auto;
+}
+.ac-item {
+  padding:7px 14px; font-size:12px; color:#999; cursor:pointer;
+  display:flex; align-items:center; gap:10px; transition:background .1s;
+}
+.ac-item:hover,.ac-item.ac-sel{background:var(--accent-glow);color:var(--accent);}
+.ac-icon{font-size:10px;color:var(--accent-dim);}
+.ac-desc{font-size:10px;color:var(--dim);margin-left:auto;white-space:nowrap;}
+
+/* ── INPUT AREA ──────────────────────────────────────────── */
+#input-area {
+  display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:1000px; background:var(--bg2);
+  border-top:1px solid var(--border); z-index:400;
+}
+#input-area.visible{display:block;}
+#input-row{display:flex;align-items:center;padding:11px 16px;gap:0;}
+#cli-input{
+  flex:1;background:transparent;border:none;outline:none;
+  color:#fff;font-family:'JetBrains Mono',monospace;
+  font-size:14px;caret-color:var(--accent);
+}
+#cli-input::placeholder{color:var(--dim);font-size:12px;}
+
+/* Quick commands bar */
+#quick-cmds {
+  display:flex; gap:7px; padding:7px 14px 10px;
+  overflow-x:auto; -webkit-overflow-scrolling:touch;
+  border-top:1px solid var(--border); scrollbar-width:none;
+}
+#quick-cmds::-webkit-scrollbar{display:none;}
+.qc {
+  flex-shrink:0; padding:5px 12px;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  background:var(--bg3); border:1px solid var(--border);
+  color:var(--accent); border-radius:3px; cursor:pointer;
+  transition:background .15s,border-color .15s; white-space:nowrap;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.qc:hover,.qc:active{background:var(--accent-glow);border-color:var(--accent-dim);}
+
+/* ── UTILITY ─────────────────────────────────────────────── */
+.hl-green{color:var(--accent);font-weight:700;}
+.hl-cyan{color:var(--cyan);}
+.hl-amber{color:var(--amber);}
+.hl-red{color:var(--red);}
+.hl-white{color:#fff;}
+.hl-dim{color:#555;}
+.hl-purple{color:var(--purple);}
+.divider{border:none;border-top:1px dashed var(--border);margin:10px 0;}
+.blink{animation:blink 1s step-end infinite;}
+@keyframes blink{50%{opacity:0;}}
+
+.tag{display:inline-block;padding:1px 7px;font-size:10px;font-weight:700;letter-spacing:1px;border-radius:2px;margin-right:6px;}
+.tag-web{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid var(--cyan);}
+.tag-py{background:rgba(255,183,0,.1);color:var(--amber);border:1px solid var(--amber);}
+.tag-sec{background:rgba(255,71,87,.15);color:var(--red);border:1px solid var(--red);}
+.tag-edu{background:rgba(0,255,136,.1);color:var(--accent);border:1px solid var(--accent);}
+.tag-sys{background:rgba(199,146,234,.1);color:var(--purple);border:1px solid var(--purple);}
+
+.project-card{border:1px solid var(--border);padding:12px 16px;margin:8px 0;background:var(--accent-glow);position:relative;cursor:pointer;transition:border-color .2s;}
+.project-card:hover{border-color:var(--accent-dim);}
+.project-card::before{content:'▶';position:absolute;left:-12px;color:var(--accent);font-size:9px;top:15px;}
+
+/* Skill bars */
+.sb-wrap{margin:5px 0;}
+.sb-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;}
+.sb-track{height:5px;background:#1a2e1a;border-radius:3px;overflow:hidden;width:320px;max-width:100%;}
+.sb-fill{height:100%;border-radius:3px;box-shadow:0 0 8px var(--accent-glow);width:0;transition:width .9s cubic-bezier(.25,.8,.25,1);}
+
+/* Progress */
+.prog-wrap{display:flex;align-items:center;gap:10px;font-size:12px;margin:4px 0;}
+.prog-track{height:6px;width:220px;background:#1a2e1a;border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-dim),var(--accent));width:0;transition:width 1.5s ease;}
+
+/* Help table */
+.help-table{border-collapse:collapse;}
+.help-table td{padding:3px 14px 3px 0;font-size:13px;vertical-align:top;}
+.help-table td:first-child{color:var(--accent);min-width:170px;}
+.help-table td:last-child{color:#666;}
+
+/* Matrix */
+#matrix-canvas{display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.94);}
+#m-hint{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);color:var(--accent);font-size:12px;z-index:710;font-family:'Share Tech Mono',monospace;animation:blink 1.5s step-end infinite;pointer-events:none;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+::-webkit-scrollbar-thumb:hover{background:var(--accent-dim);}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:620px){
+  #ascii-banner{font-size:4.5px;}
+  #bar-path-txt{display:none;}
+  .cmd-output{font-size:12px;}
+  .sb-track{width:160px;}
+  .help-table td:first-child{min-width:120px;}
+  #input-row{padding:9px 12px;}
+  #cli-input{font-size:13px;}
+}
+@media(max-width:400px){
+  #ascii-banner{font-size:3.5px;padding:12px 10px 0;}
+}
+</style>
+</head>
+<body data-theme="green">
+
+<div id="boot-screen"></div>
+<canvas id="matrix-canvas"></canvas>
+<div id="m-hint">Press any key or tap to exit the Matrix</div>
+<div id="autocomplete"></div>
+
+<div id="terminal">
+  <div class="term-bar">
+    <div class="dot r" onclick="if(confirm('Leave birdgito.in?'))window.close()"></div>
+    <div class="dot y"></div>
+    <div class="dot g"></div>
+    <div class="term-title">
+      <span id="bar-path-txt">pankaj@birdgito:~</span>
+      <div class="theme-btns">
+        <div class="tb tb-g active" title="Green"  onclick="setTheme('green')"></div>
+        <div class="tb tb-a"        title="Amber"  onclick="setTheme('amber')"></div>
+        <div class="tb tb-c"        title="Cyan"   onclick="setTheme('cyan')"></div>
+      </div>
+    </div>
+  </div>
+
+  <pre id="ascii-banner">
+  ██████╗ ██╗██████╗ ██████╗  ██████╗ ██╗████████╗ ██████╗
+  ██╔══██╗██║██╔══██╗██╔══██╗██╔════╝ ██║╚══██╔══╝██╔═══██╗
+  ██████╔╝██║██████╔╝██║  ██║██║  ███╗██║   ██║   ██║   ██║
+  ██╔══██╗██║██╔══██╗██║  ██║██║   ██║██║   ██║   ██║   ██║
+  ██████╔╝██║██║  ██║██████╔╝╚██████╔╝██║   ██║   ╚██████╔╝
+  ╚═════╝ ╚═╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝   ╚═╝    ╚═════╝
+  </pre>
+
+  <div class="welcome-block">
+    <span class="wn">Pankaj Mishra</span> &nbsp;|&nbsp; <span style="color:var(--accent)">@Birdgito</span> &nbsp;|&nbsp; Chitrakoot, Uttar Pradesh 🇮🇳<br>
+    BCA Student &nbsp;·&nbsp; Full-Stack Developer &nbsp;·&nbsp; Security Enthusiast<br>
+    <a href="https://github.com/Birdgito" target="_blank">⌥ github.com/Birdgito</a> &emsp;
+    <a href="https://www.linkedin.com/in/birdgito/" target="_blank">⌥ linkedin.com/in/birdgito</a><br>
+    <span style="color:var(--dim)">Type <span style="color:var(--accent)">help</span> to explore &nbsp;·&nbsp; ↑↓ history &nbsp;·&nbsp; Tab autocomplete &nbsp;·&nbsp; tap buttons ↓</span>
+  </div>
+
+  <div id="output"></div>
+</div>
+
+<div id="input-area">
+  <div id="input-row">
+    <span class="p-user">pankaj</span><span class="p-at">@</span><span class="p-host">birdgito</span><span class="p-colon">:</span><span class="p-path" id="cwd-span">~</span><span class="p-dollar">$</span>&nbsp;
+    <input id="cli-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="type a command…">
+  </div>
+  <div id="quick-cmds">
+    <button class="qc" onclick="fireCmd('help')">help</button>
+    <button class="qc" onclick="fireCmd('whoami')">whoami</button>
+    <button class="qc" onclick="fireCmd('about')">about</button>
+    <button class="qc" onclick="fireCmd('projects')">projects</button>
+    <button class="qc" onclick="fireCmd('skills')">skills</button>
+    <button class="qc" onclick="fireCmd('education')">education</button>
+    <button class="qc" onclick="fireCmd('cat hexamart')">hexamart</button>
+    <button class="qc" onclick="fireCmd('cat libsys')">libsys</button>
+    <button class="qc" onclick="fireCmd('cat osint')">osint</button>
+    <button class="qc" onclick="fireCmd('cat resume')">resume</button>
+    <button class="qc" onclick="fireCmd('neofetch')">neofetch</button>
+    <button class="qc" onclick="fireCmd('git log')">git log</button>
+    <button class="qc" onclick="fireCmd('nmap localhost')">nmap</button>
+    <button class="qc" onclick="fireCmd('contact')">contact</button>
+    <button class="qc" onclick="fireCmd('matrix')">matrix 🐇</button>
+    <button class="qc" onclick="fireCmd('clear')">clear</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ═══════════ BOOT ════════════════════════════════════════ */
+const bootLines = [
+  {t:'BIOS v3.1.4 — Birdgito Systems',           c:'bright', d:0},
+  {t:'CPU  : Pankaj Mishra Core™ i∞ @ 4.0 GHz',  c:'bright', d:70},
+  {t:'RAM  : 8192 MB DDR4 — PASSED',              c:'ok',     d:140},
+  {t:'NVMe : /dev/nvme0n1  [birdgito.in]  256 GB',c:'bright', d:210},
+  {t:'',                                           c:'',       d:300},
+  {t:'Starting GRUB bootloader...',                c:'',       d:360},
+  {t:'',                                           c:'',       d:410},
+  {t:'  [  OK  ] Started kernel init process',    c:'ok',     d:460},
+  {t:'  [  OK  ] Mounted /home/pankaj',            c:'ok',     d:530},
+  {t:'  [  OK  ] Started NetworkManager',          c:'ok',     d:600},
+  {t:'  [  OK  ] Loaded SSH keypair',              c:'ok',     d:670},
+  {t:'  [  OK  ] Initialised project database',   c:'ok',     d:740},
+  {t:'  [  OK  ] Loaded OSINT toolchain v2.4',    c:'ok',     d:810},
+  {t:'  [ WARN ] Cookie popup: DISABLED (good)',  c:'warn',   d:880},
+  {t:'  [  OK  ] Compiled portfolio assets',      c:'ok',     d:950},
+  {t:'  [  OK  ] birdgito.in — ONLINE 🚀',        c:'ok',     d:1020},
+  {t:'',                                           c:'',       d:1090},
+  {t:'systemd[1]: Reached target: multi-user',    c:'info',   d:1150},
+  {t:'',                                           c:'',       d:1190},
+  {t:'Birdgito GNU/Linux 6.6.0-LTS  —  birdgito.in', c:'info', d:1260},
+  {t:'',                                           c:'',       d:1300},
+  {t:'birdgito login: pankaj',                    c:'bright', d:1400},
+  {t:'Password: ●●●●●●●●●●',                      c:'bright', d:1690},
+  {t:'',                                           c:'',       d:1820},
+  {t:'Last login: Today from 127.0.0.1',          c:'bright', d:1910},
+  {t:'Welcome back, Pankaj! Have a great session.', c:'ok',   d:1990},
+];
+
+const bootEl = document.getElementById('boot-screen');
+bootLines.forEach(({t,c,d}) => {
+  setTimeout(() => {
+    const el = document.createElement('div');
+    el.className = 'boot-line' + (c ? ' '+c : '');
+    el.textContent = t;
+    bootEl.appendChild(el);
+    bootEl.scrollTop = bootEl.scrollHeight;
+  }, d);
+});
+setTimeout(() => {
+  bootEl.classList.add('fade-out');
+  setTimeout(() => {
+    bootEl.style.display = 'none';
+    document.getElementById('terminal').classList.add('visible');
+    document.getElementById('input-area').classList.add('visible');
+    inp.focus();
+  }, 700);
+}, 2900);
+
+/* ═══════════ THEME ═══════════════════════════════════════ */
+function setTheme(t) {
+  document.body.setAttribute('data-theme', t);
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.querySelector('.tb-' + t[0]).classList.add('active');
+  localStorage.setItem('bg-theme', t);
+}
+const st = localStorage.getItem('bg-theme');
+if (st) setTheme(st);
+
+/* ═══════════ STATE ═══════════════════════════════════════ */
+const inp      = document.getElementById('cli-input');
+const output   = document.getElementById('output');
+const cwdSpan  = document.getElementById('cwd-span');
+const barPath  = document.getElementById('bar-path-txt');
+const acDrop   = document.getElementById('autocomplete');
+
+let cmdHistory = JSON.parse(localStorage.getItem('bg-history') || '[]');
+let histIdx    = -1;
+let currentDir = '~';
+let acIdx      = -1;
+
+function setDir(d) {
+  currentDir = d;
+  cwdSpan.textContent = d;
+  if (barPath) barPath.textContent = 'pankaj@birdgito:' + d;
+}
+
+/* ═══════════ COMMANDS ════════════════════════════════════ */
+const CMD_META = {
+  'help':'Show all commands', 'whoami':'Identity card', 'about':'Bio',
+  'education':'Academics', 'skills':'Tech stack', 'projects':'All projects',
+  'cat hexamart':'Hexamart e-commerce', 'cat libsys':'Library System',
+  'cat osint':'OSINT Toolkit', 'cat resume':'Résumé overview',
+  'ls':'List directory', 'cd projects':'Enter projects/',
+  'cd education':'Enter education/', 'cd skills':'Enter skills/',
+  'cd ~':'Go home', 'cd ..':'Go up', 'pwd':'Print working dir',
+  'neofetch':'System info', 'contact':'Contact info', 'social':'Links',
+  'uname -a':'Kernel info', 'ifconfig':'Network interfaces',
+  'ping birdgito.in':'Ping domain', 'nmap localhost':'Port scan',
+  'top':'Process table', 'git log':'Commit history',
+  'curl birdgito.in':'HTTP request', 'history':'Command history',
+  'matrix':'Matrix rain 🐇', 'banner':'ASCII banner',
+  'clear':'Clear terminal', 'sudo hire pankaj':'Hire me!',
+};
+
+function bar(label, pct, col) {
+  const c = col==='amber'?'var(--amber)':col==='red'?'var(--red)':col==='cyan'?'var(--cyan)':'var(--accent)';
+  return `<div class="sb-wrap"><div class="sb-label"><span style="color:${c}">${label}</span><span class="hl-dim">${pct}</span></div><div class="sb-track"><div class="sb-fill" data-w="${pct}" style="background:linear-gradient(90deg,${c}88,${c})"></div></div></div>`;
+}
+function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const CMDS = {
+help:()=>`
+<span class="hl-green">╔══════════════════════════════════════════════════════════╗</span>
+<span class="hl-green">║           Birdgito Shell v3 — Command Reference          ║</span>
+<span class="hl-green">╚══════════════════════════════════════════════════════════╝</span>
+
+<table class="help-table">
+<tr><td>whoami</td><td>Who is Pankaj Mishra?</td></tr>
+<tr><td>about</td><td>Short bio</td></tr>
+<tr><td>education</td><td>Academic background</td></tr>
+<tr><td>skills</td><td>Tech stack &amp; proficiency bars</td></tr>
+<tr><td>projects</td><td>All projects (clickable cards)</td></tr>
+<tr><td>cat hexamart</td><td>Hexamart e-commerce project</td></tr>
+<tr><td>cat libsys</td><td>Library Management System</td></tr>
+<tr><td>cat osint</td><td>Cybersecurity OSINT Tools</td></tr>
+<tr><td>cat resume</td><td>Résumé overview</td></tr>
+<tr><td>contact</td><td>Email, GitHub, LinkedIn</td></tr>
+<tr><td>social</td><td>All social links</td></tr>
+<tr><td class="hl-dim">──────────────</td><td class="hl-dim">── System ─────────────────────────</td></tr>
+<tr><td>ls</td><td>List directory contents</td></tr>
+<tr><td>cd &lt;dir&gt;</td><td>Change dir (projects / education / skills / ~)</td></tr>
+<tr><td>pwd</td><td>Print current path</td></tr>
+<tr><td>neofetch</td><td>Portfolio system info</td></tr>
+<tr><td>uname -a</td><td>Kernel / OS info</td></tr>
+<tr><td>ifconfig</td><td>Network interfaces</td></tr>
+<tr><td>ping birdgito.in</td><td>Ping the domain</td></tr>
+<tr><td>nmap localhost</td><td>Port scan</td></tr>
+<tr><td>top</td><td>Process table</td></tr>
+<tr><td>git log</td><td>Commit history</td></tr>
+<tr><td>curl birdgito.in</td><td>HTTP request</td></tr>
+<tr><td>history</td><td>Command history (persistent)</td></tr>
+<tr><td class="hl-dim">──────────────</td><td class="hl-dim">── Fun ────────────────────────────</td></tr>
+<tr><td>matrix</td><td>Matrix rain easter egg 🐇</td></tr>
+<tr><td>banner</td><td>Show ASCII banner again</td></tr>
+<tr><td>sudo hire pankaj</td><td>😏 Try it.</td></tr>
+<tr><td>clear / Ctrl+L</td><td>Clear terminal</td></tr>
+</table>
+<hr class="divider">
+<span class="hl-dim">↑↓ history &nbsp;·&nbsp; Tab autocomplete &nbsp;·&nbsp; Ctrl+C cancel &nbsp;·&nbsp; Click project cards!</span>
+`,
+
+whoami:()=>`
+<span class="hl-green">uid=1000(pankaj)</span> <span class="hl-cyan">gid=1000(developers)</span> groups=1000(developers),27(security),1337(hackers)
+
+<span class="hl-white">Pankaj Mishra</span> — alias <span class="hl-green">Birdgito</span>
+Location   : <span class="hl-amber">Chitrakoot, Uttar Pradesh, India 🇮🇳</span>
+Role       : BCA Student · Full-Stack Developer · Security Enthusiast
+University : <span class="hl-cyan">Sadguru Institute of Computer Studies, Chitrakoot</span>
+             <span class="hl-dim">Affiliated: MCNUJC, Bhopal</span>
+Shell      : <span class="hl-dim">/bin/bash 5.2.15</span>
+Domain     : <span class="hl-green">birdgito.in</span>
+GitHub     : <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+`,
+
+about:()=>`
+<span class="hl-amber">// about.txt</span>
+<hr class="divider">
+  I'm <span class="hl-white">Pankaj Mishra</span>, a passionate BCA student and developer from
+  Chitrakoot, Uttar Pradesh. I build things for the web and spend
+  nights exploring the world of cybersecurity and open-source intelligence.
+
+  My journey started with curiosity about how computers work — which led me
+  to full-stack development, Python scripting, and eventually OSINT tooling.
+
+  When I'm not coding, I'm reading about low-level systems, network security,
+  or contributing to open-source projects under my handle <span class="hl-green">@Birdgito</span>.
+
+  <span class="hl-dim">"The quieter you become, the more you are able to hear."
+  — Kali Linux motto</span>
+`,
+
+education:()=>`
+<span class="hl-cyan">┌─ EDUCATION ──────────────────────────────────────────────┐</span>
+
+  <span class="tag tag-edu">CURRENT</span> <span class="hl-white">Bachelor of Computer Applications (BCA)</span>
+           Sadguru Institute of Computer Studies
+           Chitrakoot, Madhya Pradesh
+
+           Affiliated:
+           <span class="hl-amber">Makhanlal Chaturvedi National University</span>
+           <span class="hl-amber">of Journalism &amp; Communication (MCNUJC), Bhopal</span>
+
+           Status : <span class="hl-green">▶  Pursuing</span>
+  <hr class="divider">
+  <span class="tag tag-edu">COURSEWORK</span>
+    Data Structures &amp; Algorithms · Web Technologies
+    Database Management Systems · Operating Systems
+    Computer Networks · Python Programming
+    Software Engineering · Cybersecurity Fundamentals
+    Object-Oriented Programming · Discrete Mathematics
+
+<span class="hl-cyan">└─────────────────────────────────────────────────────────┘</span>
+`,
+
+skills:()=>{
+  setTimeout(()=>{ document.querySelectorAll('.sb-fill').forEach(e=>e.style.width=e.dataset.w); }, 100);
+  return `
+<span class="hl-amber">// skills.json</span>
+<hr class="divider">
+<span class="hl-cyan">── Languages ──────────────────────────────────────</span>
+${bar('HTML / CSS',      '90%','green')}
+${bar('JavaScript',      '78%','green')}
+${bar('Python',          '75%','amber')}
+${bar('SQL',             '70%','amber')}
+${bar('Bash / Shell',    '65%','cyan')}
+${bar('C / C++',         '55%','cyan')}
+
+<span class="hl-cyan">── Frameworks &amp; Tools ────────────────────────────</span>
+${bar('React.js',        '70%','green')}
+${bar('Node.js',         '65%','green')}
+${bar('Git / GitHub',    '85%','amber')}
+${bar('Linux',           '82%','cyan')}
+${bar('OSINT Toolchain', '72%','red')}
+${bar('MySQL / SQLite',  '68%','amber')}
+
+<span class="hl-cyan">── Interests ──────────────────────────────────────</span>
+  <span class="hl-green">◆</span> Full-Stack Web Development
+  <span class="hl-green">◆</span> Cybersecurity &amp; OSINT
+  <span class="hl-green">◆</span> Open-Source Contribution
+  <span class="hl-green">◆</span> Linux System Administration
+  <span class="hl-green">◆</span> Network Security &amp; Ethical Hacking`;
+},
+
+projects:()=>`
+<span class="hl-green">// ~/projects</span>  <span class="hl-dim">— Use <span class="hl-white">cat &lt;name&gt;</span> or click a card</span>
+<hr class="divider">
+<div class="project-card" onclick="fireCmd('cat hexamart')">
+  <span class="tag tag-web">WEB</span> <span class="hl-white">hexamart</span>
+  <span class="hl-dim">E-commerce platform focused on tech &amp; electronics</span>
+  <span style="color:var(--dim);font-size:11px;">→ cat hexamart</span>
+</div>
+<div class="project-card" onclick="fireCmd('cat libsys')">
+  <span class="tag tag-sys">SYSTEM</span> <span class="hl-white">libsys</span>
+  <span class="hl-dim">Library Management System — streamline library workflows</span>
+  <span style="color:var(--dim);font-size:11px;">→ cat libsys</span>
+</div>
+<div class="project-card" onclick="fireCmd('cat osint')">
+  <span class="tag tag-sec">SEC</span> <span class="hl-white">osint</span>
+  <span class="hl-dim">Cybersecurity OSINT toolkit — intelligence gathering</span>
+  <span style="color:var(--dim);font-size:11px;">→ cat osint</span>
+</div>
+<span class="hl-dim" style="font-size:11px;">Tip: click a card or type the command above.</span>
+`,
+
+'cat hexamart':()=>`
+<span class="hl-amber">── ~/projects/hexamart/README.md ──────────────────</span>
+
+<span class="hl-white">⚡ HEXAMART</span>  <span class="tag tag-web">E-COMMERCE</span>
+
+  Full-featured e-commerce platform focused on technology
+  products and electronics — built for a seamless, modern
+  shopping experience.
+
+<span class="hl-cyan">── Features ────────────────────────────────────────</span>
+  <span class="hl-green">✓</span> Product catalogue with filters &amp; search
+  <span class="hl-green">✓</span> User authentication &amp; sessions
+  <span class="hl-green">✓</span> Shopping cart &amp; checkout flow
+  <span class="hl-green">✓</span> Product detail pages with reviews
+  <span class="hl-green">✓</span> Admin dashboard for inventory
+  <span class="hl-green">✓</span> Responsive mobile-first design
+
+<span class="hl-cyan">── Stack ────────────────────────────────────────────</span>
+  Frontend : <span class="hl-green">HTML · CSS · JavaScript</span>
+  Backend  : <span class="hl-amber">Node.js / Python</span>
+  Database : <span class="hl-cyan">MySQL</span>
+
+<span class="hl-cyan">── Repo ─────────────────────────────────────────────</span>
+  <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+`,
+
+'cat libsys':()=>`
+<span class="hl-amber">── ~/projects/libsys/README.md ────────────────────</span>
+
+<span class="hl-white">📚 LIBRARY MANAGEMENT SYSTEM</span>  <span class="tag tag-sys">SYSTEM</span>
+
+  Digitises and streamlines the day-to-day workflow of a
+  library — book cataloguing, member records &amp; issue tracking.
+
+<span class="hl-cyan">── Features ────────────────────────────────────────</span>
+  <span class="hl-green">✓</span> Book catalogue (add / edit / delete)
+  <span class="hl-green">✓</span> Member registration &amp; management
+  <span class="hl-green">✓</span> Issue / return tracking with due dates
+  <span class="hl-green">✓</span> Automatic fine calculation
+  <span class="hl-green">✓</span> Search by title, author or ISBN
+  <span class="hl-green">✓</span> Admin &amp; librarian role separation
+
+<span class="hl-cyan">── Stack ────────────────────────────────────────────</span>
+  Language : <span class="hl-amber">Python 3</span>
+  Database : <span class="hl-cyan">MySQL / SQLite</span>
+  UI       : <span class="hl-green">HTML · CSS · JS</span>
+`,
+
+'cat osint':()=>`
+<span class="hl-red">── ~/projects/osint/README.md ─────────────────────</span>
+<span class="hl-red">⚠  For ethical &amp; educational research use only.</span>
+<hr class="divider">
+
+<span class="hl-white">🔍 CYBERSECURITY OSINT TOOLS</span>  <span class="tag tag-sec">SECURITY</span>
+
+  Collection of open-source intelligence scripts for ethical
+  security research, recon &amp; digital footprint analysis.
+
+<span class="hl-cyan">── Toolset ──────────────────────────────────────────</span>
+  <span class="hl-green">✓</span> Username enumeration across platforms
+  <span class="hl-green">✓</span> Email OSINT &amp; breach checking
+  <span class="hl-green">✓</span> Domain / IP reconnaissance
+  <span class="hl-green">✓</span> Social media footprint mapper
+  <span class="hl-green">✓</span> File metadata extractor
+  <span class="hl-green">✓</span> Google dorking automation
+
+<span class="hl-cyan">── Stack ────────────────────────────────────────────</span>
+  Language : <span class="hl-amber">Python 3</span>
+  Libraries: <span class="hl-green">requests · BeautifulSoup · Shodan API</span>
+  Env      : <span class="hl-dim">Kali Linux · Bash</span>
+
+<span class="hl-red">For CTF, bug bounty &amp; educational use only. Always get authorisation.</span>
+`,
+
+'cat resume':()=>`
+<span class="hl-amber">── ~/resume.txt ─────────────────────────────────────</span>
+
+<span class="hl-white">PANKAJ MISHRA</span>  <span class="hl-dim">@Birdgito</span>
+Chitrakoot, U.P. · <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a> · <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+<hr class="divider">
+<span class="hl-green">EDUCATION</span>
+  BCA — Sadguru Institute of Computer Studies (MCNUJC)
+  Chitrakoot, M.P. — Status: Pursuing
+
+<span class="hl-green">SKILLS</span>
+  Languages  : HTML, CSS, JavaScript, Python, SQL, Bash, C/C++
+  Frameworks : React.js, Node.js
+  Tools      : Git, Linux, MySQL, OSINT Toolchain
+
+<span class="hl-green">PROJECTS</span>
+  • Hexamart         — Tech &amp; electronics e-commerce platform
+  • Library Mgmt Sys — Digital library workflow system
+  • OSINT Toolkit    — Cybersecurity intelligence tools
+
+<span class="hl-green">INTERESTS</span>
+  Full-Stack Dev · Cybersecurity · Open Source · Linux · Networking
+
+<span class="hl-dim">For the full résumé, connect via LinkedIn or email.</span>
+`,
+
+ls:()=>{
+  const map = {
+    '~':`<span class="hl-dim">total 7</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">projects/</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">education/</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">skills/</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">about.txt</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">contact.txt</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-amber">resume.txt</span>
+-rwxr-xr-x  pankaj  birdgito  <span class="hl-red">osint.sh</span>`,
+    '~/projects':`<span class="hl-dim">total 3</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">hexamart/</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">libsys/</span>
+drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">osint/</span>`,
+    '~/education':`<span class="hl-dim">total 2</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">BCA_MCNUJC.txt</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">coursework.txt</span>`,
+    '~/skills':`<span class="hl-dim">total 4</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">languages.txt</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-green">frameworks.txt</span>
+-rw-r--r--  pankaj  birdgito  <span class="hl-amber">certifications.txt</span>
+-rwxr-xr-x  pankaj  birdgito  <span class="hl-red">hack.sh</span>`,
+  };
+  return map[currentDir] || map['~'];
+},
+
+pwd:()=>`/home/pankaj${currentDir==='~'?'':'/'+currentDir.replace('~/','')  }`,
+'cd projects' :()=>{ setDir('~/projects');  return '<span class="hl-dim">→ /home/pankaj/projects</span>'; },
+'cd education':()=>{ setDir('~/education'); return '<span class="hl-dim">→ /home/pankaj/education</span>'; },
+'cd skills'   :()=>{ setDir('~/skills');    return '<span class="hl-dim">→ /home/pankaj/skills</span>'; },
+'cd ~'        :()=>{ setDir('~');           return '<span class="hl-dim">→ /home/pankaj</span>'; },
+'cd ..'       :()=>{ setDir('~');           return '<span class="hl-dim">→ /home/pankaj</span>'; },
+
+neofetch:()=>`
+<span class="hl-green">        .                </span>  <span class="hl-white">pankaj</span><span class="hl-dim">@</span><span class="hl-cyan">birdgito</span>
+<span class="hl-green">       .##.              </span>  <span class="hl-dim">──────────────────────────────</span>
+<span class="hl-green">      .####.             </span>  <span class="hl-green">OS</span>       : Birdgito GNU/Linux 6.6.0
+<span class="hl-green">     .######.            </span>  <span class="hl-green">Host</span>     : birdgito.in
+<span class="hl-green">    .########.           </span>  <span class="hl-green">Uptime</span>   : Always building 🚀
+<span class="hl-green">   .##########.          </span>  <span class="hl-green">Shell</span>    : bash 5.2.15
+<span class="hl-green">  .####.  .####.         </span>  <span class="hl-green">Theme</span>    : Matrix Green (Dark)
+<span class="hl-green"> .####.    .####.        </span>  <span class="hl-green">Degree</span>   : BCA — Pursuing
+<span class="hl-green">  .######.######.        </span>  <span class="hl-green">College</span>  : SICS, Chitrakoot
+<span class="hl-green">   .############.        </span>  <span class="hl-green">Univ</span>     : MCNUJC, Bhopal
+<span class="hl-green">    .##########.         </span>  <span class="hl-green">Location</span> : Chitrakoot, U.P.
+<span class="hl-green">     .########.          </span>  <span class="hl-green">GitHub</span>   : @Birdgito
+<span class="hl-green">      .######.           </span>  <span class="hl-green">Stack</span>    : HTML CSS JS Python SQL Bash
+<span class="hl-green">       .####.            </span>  <span class="hl-green">Interests</span>: WebDev · OSINT · Linux
+<span class="hl-green">        .##.             </span>  <span class="hl-dim">──────────────────────────────</span>
+<span class="hl-green">         ..              </span>  <span style="background:#ff5f57;padding:0 7px">&nbsp;</span><span style="background:#febc2e;padding:0 7px">&nbsp;</span><span style="background:#28c840;padding:0 7px">&nbsp;</span><span style="background:#00e5ff;padding:0 7px">&nbsp;</span><span style="background:#c792ea;padding:0 7px">&nbsp;</span><span style="background:#fff;padding:0 7px">&nbsp;</span>
+`,
+
+contact:()=>`
+<span class="hl-amber">// contact.txt</span>
+<hr class="divider">
+  <span class="hl-green">Email</span>    : pankaj@birdgito.in
+  <span class="hl-cyan">LinkedIn</span> : <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+  <span class="hl-white">GitHub</span>   : <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+  <span class="hl-amber">Domain</span>   : <a href="https://birdgito.in" style="color:var(--amber)">birdgito.in</a>
+  <span class="hl-dim">Location</span> : Chitrakoot, Uttar Pradesh, India 🇮🇳
+
+  <span class="hl-dim">Open to: internships · freelance · collaborations · open source</span>
+`,
+
+social:()=>`
+  <span class="hl-green">◆</span> GitHub   → <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+  <span class="hl-cyan">◆</span> LinkedIn → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+  <span class="hl-amber">◆</span> Domain   → <a href="https://birdgito.in" style="color:var(--amber)">birdgito.in</a>
+`,
+
+'uname -a':()=>`Linux birdgito 6.6.0-birdgito-SMP #1 SMP 2025 x86_64 GNU/Linux`,
+
+ifconfig:()=>`
+<span class="hl-green">eth0</span>: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500
+      inet <span class="hl-amber">192.168.1.108</span>  netmask 255.255.255.0
+      inet6 fe80::a8b1:ff:dead:beef  prefixlen 64
+      RX packets 13337  bytes 9.6 MB
+      TX packets 7420   bytes 1.2 MB
+
+<span class="hl-cyan">lo</span>: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536
+      inet <span class="hl-amber">127.0.0.1</span>  netmask 255.0.0.0
+      inet6 ::1  prefixlen 128
+`,
+
+'ping birdgito.in':()=>{
+  let o = `PING birdgito.in (104.21.0.1) 56(84) bytes of data.\n`;
+  for(let i=0;i<4;i++) o+=`64 bytes from birdgito.in: icmp_seq=${i+1} ttl=64 time=<span class="hl-green">${(10+Math.random()*12).toFixed(3)} ms</span>\n`;
+  o+=`\n--- birdgito.in ping statistics ---\n4 packets transmitted, <span class="hl-green">4 received</span>, 0% packet loss`;
+  return o;
+},
+
+'nmap localhost':()=>`
+Starting Nmap 7.94 — nmap.org
+<span class="hl-amber">Nmap scan report for localhost (127.0.0.1)</span>
+
+PORT     STATE  SERVICE
+<span class="hl-green">22/tcp   open   ssh</span>      OpenSSH 9.2
+<span class="hl-green">80/tcp   open   http</span>     birdgito portfolio server
+<span class="hl-green">443/tcp  open   https</span>    TLS 1.3
+<span class="hl-dim">3306/tcp closed mysql</span>
+<span class="hl-dim">8080/tcp closed http-alt</span>
+
+Nmap done: 1 host up in 0.42s
+<span class="hl-red">⚠  Only scan systems you own or have permission to test.</span>
+`,
+
+top:()=>`
+<span class="hl-amber">top — birdgito — load avg: 0.01, 0.05, 0.00</span>
+Tasks: 1 running · 0 sleeping
+%Cpu: <span class="hl-green">2.4</span> us, 0.8 sy, <span class="hl-green">96.8</span> id
+
+  PID  USER    PR  VIRT    RES   %CPU %MEM  COMMAND
+ 1001  pankaj  20  512MB  64MB    2.4  0.8  <span class="hl-green">portfolio</span>
+ 1002  pankaj  20  256MB  32MB    0.5  0.4  <span class="hl-cyan">hexamart</span>
+ 1003  pankaj  20  128MB  16MB    0.2  0.2  <span class="hl-amber">python3</span>
+ 1004  pankaj  20   64MB   8MB    0.1  0.1  <span class="hl-red">osint.sh</span>
+ 1005  pankaj  20   32MB   4MB    0.0  0.0  <span class="hl-dim">bash</span>
+`,
+
+'git log':()=>`
+<span class="hl-amber">commit a1b2c3d</span> (HEAD → main)
+Author: Pankaj Mishra &lt;pankaj@birdgito.in&gt;
+Date:   Fri Mar 2025
+    feat: launch birdgito.in — linux terminal portfolio UI 🚀
+
+<span class="hl-amber">commit b2c3d4e</span>
+Author: Pankaj Mishra &lt;pankaj@birdgito.in&gt;
+Date:   Thu Mar 2025
+    feat: add OSINT toolkit v2 — passive recon scripts
+
+<span class="hl-amber">commit c3d4e5f</span>
+Author: Pankaj Mishra &lt;pankaj@birdgito.in&gt;
+Date:   Wed Feb 2025
+    feat: library management system v1.0
+
+<span class="hl-amber">commit d4e5f6a</span>
+Author: Pankaj Mishra &lt;pankaj@birdgito.in&gt;
+Date:   Mon Jan 2025
+    feat: hexamart e-commerce — initial commit
+
+<span class="hl-amber">commit e5f6a7b</span>
+Author: Pankaj Mishra &lt;pankaj@birdgito.in&gt;
+Date:   Dec 2024
+    chore: init repo — the journey begins
+`,
+
+'curl birdgito.in':()=>`
+<span class="hl-dim">  % Total  % Received  Speed</span>
+<span class="hl-green">100  4096  100  4096   98304</span>
+
+HTTP/2 200
+server         : BirdgitoOS/1.0
+content-type   : text/html; charset=utf-8
+x-powered-by   : Passion + Coffee
+x-developer    : Pankaj Mishra (@Birdgito)
+x-stack        : HTML · CSS · JS · Python
+x-domain       : birdgito.in
+
+<span class="hl-green">&lt;!-- Welcome to birdgito.in --&gt;</span>
+`,
+
+history:()=>{
+  if(!cmdHistory.length) return '<span class="hl-dim">(no history yet — run some commands!)</span>';
+  return cmdHistory.slice(0,20).map((c,i)=>
+    `  <span class="hl-dim">${String(cmdHistory.length-i).padStart(3)}</span>  ${esc(c)}`
+  ).join('\n');
+},
+
+'sudo hire pankaj':()=>`
+<span class="hl-amber">[sudo] password for pankaj: ●●●●●●●●●●</span>
+
+<span class="hl-green">✓ Sudo authentication successful.</span>
+
+<span class="hl-white">Executing: apt install pankaj-mishra --no-recommends</span>
+
+<div class="prog-wrap">
+  <span class="hl-dim">Installing...</span>
+  <div class="prog-track"><div class="prog-fill" data-w="100%"></div></div>
+</div>
+
+<span class="hl-green">✓  Motivation     : <span class="hl-amber">∞ / 10</span></span>
+<span class="hl-green">✓  Learning Speed : <span class="hl-amber">Fast</span></span>
+<span class="hl-green">✓  Ships Code     : <span class="hl-amber">Yes</span></span>
+<span class="hl-green">✓  Team Player    : <span class="hl-amber">Yes</span></span>
+<span class="hl-green">✓  Passion        : <span class="hl-amber">Real</span></span>
+
+<span class="hl-green">Successfully installed pankaj-mishra@latest 🎉</span>
+Connect → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+`,
+
+'^C':()=>'',
+matrix:()=>{ startMatrix(); return '<span class="hl-green">Entering the Matrix... press any key or tap to exit.</span>'; },
+
+banner:()=>`<pre style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:clamp(6px,1.15vw,12px);line-height:1.3">
+  ██████╗ ██╗██████╗ ██████╗  ██████╗ ██╗████████╗ ██████╗
+  ██╔══██╗██║██╔══██╗██╔══██╗██╔════╝ ██║╚══██╔══╝██╔═══██╗
+  ██████╔╝██║██████╔╝██║  ██║██║  ███╗██║   ██║   ██║   ██║
+  ██╔══██╗██║██╔══██╗██║  ██║██║   ██║██║   ██║   ██║   ██║
+  ██████╔╝██║██║  ██║██████╔╝╚██████╔╝██║   ██║   ╚██████╔╝
+  ╚═════╝ ╚═╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝   ╚═╝    ╚═════╝
+</pre>`,
+
+clear:()=>{ output.innerHTML=''; return null; },
+'':()=>''
+};
+
+/* ═══════════ RUN ═════════════════════════════════════════ */
+function run(raw) {
+  const cmd = raw.trim();
+  if (cmd && cmd !== '^C') {
+    cmdHistory.unshift(cmd);
+    if (cmdHistory.length > 50) cmdHistory.pop();
+    localStorage.setItem('bg-history', JSON.stringify(cmdHistory));
+  }
+  histIdx = -1;
+  hideAC();
+
+  const block = document.createElement('div');
+  block.className = 'cmd-block';
+
+  const pl = document.createElement('div');
+  pl.className = 'prompt-line';
+  pl.innerHTML = `<span class="p-user">pankaj</span><span class="p-at">@</span><span class="p-host">birdgito</span><span class="p-colon">:</span><span class="p-path">${currentDir}</span><span class="p-dollar">$</span>&nbsp;<span class="p-cmd">${esc(cmd)}</span>`;
+  block.appendChild(pl);
+
+  if (cmd !== '') {
+    const fn = CMDS[cmd] || CMDS[cmd.toLowerCase()] || (()=>`<span class="hl-red">bash: ${esc(cmd)}: command not found</span> <span class="hl-dim">— try <span style="color:var(--accent)">help</span></span>`);
+    const result = fn();
+    if (result !== null) {
+      const od = document.createElement('div');
+      od.className = 'cmd-output';
+      od.innerHTML = result;
+      block.appendChild(od);
+    }
+  }
+
+  output.appendChild(block);
+
+  // animate fills
+  setTimeout(() => {
+    block.querySelectorAll('.sb-fill, .prog-fill').forEach(el => {
+      el.style.width = el.dataset.w || '100%';
+    });
+  }, 120);
+
+  window.scrollTo(0, document.body.scrollHeight);
+}
+
+function fireCmd(cmd) {
+  inp.value = '';
+  hideAC();
+  run(cmd);
+  inp.focus();
+}
+
+/* ═══════════ AUTOCOMPLETE ════════════════════════════════ */
+const ALL_CMDS = Object.keys(CMD_META);
+
+function showAC(val) {
+  if (!val) { hideAC(); return; }
+  const matches = ALL_CMDS.filter(c => c.startsWith(val.toLowerCase()) && c !== val.toLowerCase());
+  if (!matches.length) { hideAC(); return; }
+
+  acDrop.innerHTML = '';
+  acIdx = -1;
+  matches.slice(0, 8).forEach(c => {
+    const d = document.createElement('div');
+    d.className = 'ac-item';
+    d.innerHTML = `<span class="ac-icon">❯</span><span>${esc(c)}</span><span class="ac-desc">${CMD_META[c]||''}</span>`;
+    d.addEventListener('mousedown', e => { e.preventDefault(); inp.value = c; hideAC(); inp.focus(); });
+    acDrop.appendChild(d);
+  });
+
+  const ir = document.getElementById('input-row').getBoundingClientRect();
+  acDrop.style.left   = ir.left + 'px';
+  acDrop.style.bottom = (window.innerHeight - ir.top + 4) + 'px';
+  acDrop.style.width  = ir.width + 'px';
+  acDrop.style.display = 'block';
+}
+
+function hideAC() { acDrop.style.display = 'none'; acIdx = -1; }
+
+function acNav(dir) {
+  const items = acDrop.querySelectorAll('.ac-item');
+  if (!items.length) return false;
+  items.forEach(i => i.classList.remove('ac-sel'));
+  acIdx = (acIdx + dir + items.length) % items.length;
+  items[acIdx].classList.add('ac-sel');
+  inp.value = items[acIdx].querySelector('span:nth-child(2)').textContent;
+  return true;
+}
+
+/* ═══════════ INPUT EVENTS ════════════════════════════════ */
+inp.addEventListener('input', () => showAC(inp.value));
+
+inp.addEventListener('keydown', e => {
+  const acOpen = acDrop.style.display === 'block';
+
+  if (acOpen) {
+    if (e.key === 'ArrowDown') { e.preventDefault(); acNav(1); return; }
+    if (e.key === 'ArrowUp')   { e.preventDefault(); acNav(-1); return; }
+    if (e.key === 'Escape')    { hideAC(); return; }
+  }
+
+  if (e.key === 'Enter') {
+    const val = inp.value; inp.value = ''; hideAC(); run(val); return;
+  }
+
+  // history (only when AC closed)
+  if (e.key === 'ArrowUp' && !acOpen) {
+    e.preventDefault();
+    histIdx = Math.min(histIdx + 1, cmdHistory.length - 1);
+    inp.value = cmdHistory[histIdx] || '';
+    inp.setSelectionRange(inp.value.length, inp.value.length);
+    return;
+  }
+  if (e.key === 'ArrowDown' && !acOpen) {
+    e.preventDefault();
+    histIdx = Math.max(histIdx - 1, -1);
+    inp.value = histIdx >= 0 ? cmdHistory[histIdx] : '';
+    return;
+  }
+
+  // Tab
+  if (e.key === 'Tab') {
+    e.preventDefault();
+    if (acOpen) {
+      const items = acDrop.querySelectorAll('.ac-item');
+      if (items.length === 1) { inp.value = items[0].querySelector('span:nth-child(2)').textContent; hideAC(); }
+      else acNav(1);
+    } else {
+      const m = ALL_CMDS.filter(c => c.startsWith(inp.value.toLowerCase()));
+      if (m.length === 1) { inp.value = m[0]; hideAC(); }
+      else if (m.length > 1) showAC(inp.value);
+    }
+    return;
+  }
+
+  // Ctrl+L clear
+  if (e.ctrlKey && e.key === 'l') { e.preventDefault(); output.innerHTML = ''; return; }
+  // Ctrl+C
+  if (e.ctrlKey && e.key === 'c') { e.preventDefault(); run('^C'); inp.value = ''; hideAC(); return; }
+});
+
+// Click outside AC → hide
+document.addEventListener('mousedown', e => { if (!acDrop.contains(e.target)) hideAC(); });
+
+// Click terminal body → focus input
+document.addEventListener('click', e => {
+  if (!window.getSelection().toString() &&
+      !e.target.closest('a') && !e.target.closest('.qc') &&
+      !e.target.closest('.tb') && !e.target.closest('.ac-item') &&
+      !e.target.closest('.dot')) {
+    inp.focus();
+  }
+});
+
+/* ═══════════ MATRIX ══════════════════════════════════════ */
+const canvas = document.getElementById('matrix-canvas');
+const mCtx   = canvas.getContext('2d');
+let mAF, mOn = false;
+
+function startMatrix() {
+  if (mOn) return;
+  mOn = true;
+  canvas.style.display = 'block';
+  document.getElementById('m-hint').style.display = 'block';
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+
+  const cols  = Math.floor(canvas.width / 15);
+  const drops = Array(cols).fill(1);
+  const chars = '01アイウエオカキクケコBirdgitoOSINT@#$%&ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+  function draw() {
+    mCtx.fillStyle = 'rgba(0,0,0,0.05)';
+    mCtx.fillRect(0, 0, canvas.width, canvas.height);
+    const t = document.body.getAttribute('data-theme');
+    mCtx.fillStyle = t==='amber'?'#ffb700':t==='cyan'?'#00e5ff':'#00ff88';
+    mCtx.font = '13px "Share Tech Mono"';
+    drops.forEach((y,i) => {
+      mCtx.fillText(chars[Math.floor(Math.random()*chars.length)], i*15, y*15);
+      if (y*15 > canvas.height && Math.random() > .975) drops[i] = 0;
+      drops[i]++;
+    });
+    mAF = requestAnimationFrame(draw);
+  }
+  draw();
+
+  const stop = () => {
+    if (!mOn) return;
+    mOn = false;
+    cancelAnimationFrame(mAF);
+    canvas.style.display = 'none';
+    document.getElementById('m-hint').style.display = 'none';
+  };
+  document.addEventListener('keydown',    stop, { once:true });
+  document.addEventListener('touchstart', stop, { once:true });
+  setTimeout(() => document.addEventListener('click', stop, { once:true }), 400);
+}
+
+/* ═══════════ BOOT AUTO-HELP ═════════════════════════════ */
+setTimeout(() => {
+  if (document.getElementById('terminal').classList.contains('visible')) run('help');
+}, 3100);
+</script>
+</body>
+</html>
