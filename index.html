@@ -4,371 +4,807 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Birdgito.in — Pankaj Mishra</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
-/* ── THEMES ─────────────────────────────────────────────── */
-:root {
-  --accent:      #00ff88;
-  --accent-dim:  #00cc66;
-  --accent-glow: rgba(0,255,136,0.16);
-  --amber: #ffb700; --cyan: #00e5ff;
-  --red:   #ff4757; --purple: #c792ea;
-  --bg:  #080c08; --bg2: #0b100b; --bg3: #0f160f;
-  --border: #182818; --dim: #3a5a3a;
-}
-body[data-theme="amber"] {
-  --accent: #ffb700; --accent-dim: #cc9200;
-  --accent-glow: rgba(255,183,0,0.14);
-  --bg: #0c0a04; --bg2: #100e06; --bg3: #141008;
-  --border: #2a2210; --dim: #5a4a20;
-}
-body[data-theme="cyan"] {
-  --accent: #00e5ff; --accent-dim: #00b8cc;
-  --accent-glow: rgba(0,229,255,0.14);
-  --bg: #030c0e; --bg2: #051014; --bg3: #071418;
-  --border: #0e2830; --dim: #1a4a58;
-}
-
-/* ── RESET ──────────────────────────────────────────────── */
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+/* ── WIN2K BASE ──────────────────────────────────────────── */
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
-  background:var(--bg); color:var(--accent);
-  font-family:'JetBrains Mono',monospace;
-  min-height:100vh; overflow-x:hidden; cursor:text;
-  transition:background .4s,color .4s;
+  background: #008080;
+  font-family: "Tahoma", "MS Sans Serif", Arial, sans-serif;
+  font-size: 11px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  cursor: default;
 }
 
-/* Scanlines */
+/* Wallpaper teal desktop background with subtle grid */
 body::before {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:9999;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);
-}
-/* Vignette */
-body::after {
-  content:''; position:fixed; inset:0; pointer-events:none; z-index:9998;
-  background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65) 100%);
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(135deg, #007070 25%, transparent 25%) -10px 0,
+    linear-gradient(225deg, #007070 25%, transparent 25%) -10px 0,
+    linear-gradient(315deg, #007070 25%, transparent 25%),
+    linear-gradient(45deg,  #007070 25%, transparent 25%);
+  background-size: 20px 20px;
+  background-color: #008080;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
 }
 
-/* ── BOOT ───────────────────────────────────────────────── */
+/* ── WIN2K BUTTON STYLE ──────────────────────────────────── */
+.btn {
+  display: inline-block;
+  padding: 2px 10px;
+  font-family: "Tahoma", Arial, sans-serif;
+  font-size: 11px;
+  color: #000;
+  background: #d4d0c8;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  outline: none;
+  min-width: 72px;
+  text-align: center;
+}
+.btn:active {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  padding: 3px 9px 1px 11px;
+}
+.btn:focus { outline: 1px dotted #000; outline-offset: -3px; }
+
+/* ── WINDOW ──────────────────────────────────────────────── */
+.window {
+  background: #d4d0c8;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #404040;
+  border-bottom: 2px solid #404040;
+  box-shadow: 1px 1px 0 #808080;
+  position: relative;
+  z-index: 10;
+}
+
+.window-inner {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* Title bar */
+.titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: #fff;
+  padding: 3px 4px 3px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: bold;
+  user-select: none;
+  cursor: default;
+}
+.titlebar .tb-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.titlebar .tb-title { flex: 1; }
+.titlebar .tb-btns  { display: flex; gap: 2px; }
+.titlebar .tb-btn {
+  width: 16px; height: 14px;
+  background: #d4d0c8;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #404040;
+  border-bottom: 1px solid #404040;
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #000; font-weight: bold; line-height: 1;
+}
+.titlebar .tb-btn:active {
+  border-top: 1px solid #404040;
+  border-left: 1px solid #404040;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+
+/* Menu bar */
+.menubar {
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+  padding: 2px 4px 1px;
+  display: flex; gap: 0;
+  font-size: 11px;
+}
+.menubar-item {
+  padding: 2px 8px;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.menubar-item:hover {
+  background: #000080;
+  color: #fff;
+  border: 1px solid #808080;
+}
+
+/* Address bar */
+.addrbar {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 4px;
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+}
+.addrbar-label { font-size: 11px; white-space: nowrap; }
+.addrbar-input {
+  flex: 1; height: 20px;
+  background: #fff;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  padding: 0 4px; font-size: 11px; font-family: inherit;
+  outline: none; color: #000;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex; align-items: center; gap: 3px;
+  padding: 3px 4px;
+  background: #d4d0c8;
+  border-bottom: 1px solid #808080;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.toolbar::-webkit-scrollbar { height: 4px; }
+.toolbar::-webkit-scrollbar-thumb { background: #808080; }
+.tool-btn {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-family: inherit;
+  color: #000;
+  background: #d4d0c8;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  cursor: pointer; white-space: nowrap; user-select: none;
+}
+.tool-btn:hover { background: #e8e6de; }
+.tool-btn:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+}
+.tool-sep {
+  width: 1px; height: 22px;
+  background: #808080;
+  border-right: 1px solid #fff;
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+/* Sunken panel for terminal output area */
+.sunken {
+  background: #fff;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+}
+
+/* Status bar */
+.statusbar {
+  background: #d4d0c8;
+  border-top: 1px solid #808080;
+  padding: 2px 4px;
+  display: flex; gap: 6px;
+  font-size: 10px; color: #333;
+}
+.status-panel {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  padding: 1px 8px;
+}
+
+/* ── BOOT SCREEN ─────────────────────────────────────────── */
 #boot-screen {
-  position:fixed; inset:0; background:#000;
-  z-index:9000; padding:28px 32px; overflow:hidden;
-  transition:opacity .7s ease;
+  position: fixed; inset: 0;
+  background: #000080;
+  z-index: 9000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  transition: opacity .6s ease;
 }
-#boot-screen.fade-out { opacity:0; pointer-events:none; }
-.boot-line {
-  font-family:'Share Tech Mono',monospace;
-  font-size:13px; line-height:1.65; color:#444;
-  opacity:0; animation:bRev .04s forwards;
-}
-.boot-line.ok{color:#00ff88;} .boot-line.warn{color:#ffb700;}
-.boot-line.info{color:#00e5ff;} .boot-line.bright{color:#999;}
-@keyframes bRev{to{opacity:1;}}
+#boot-screen.fade-out { opacity: 0; pointer-events: none; }
 
-/* ── TERMINAL ───────────────────────────────────────────── */
-#terminal { display:none; flex-direction:column; min-height:100vh; max-width:1000px; margin:0 auto; padding-bottom:165px; }
-#terminal.visible { display:flex; }
-
-.term-bar {
-  display:flex; align-items:center; gap:8px; padding:9px 16px;
-  background:var(--bg2); border-bottom:1px solid var(--border);
-  position:sticky; top:0; z-index:300;
+.boot-logo {
+  display: flex; align-items: center; gap: 18px; margin-bottom: 32px;
 }
-.dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-.dot.r{background:#ff5f57;cursor:pointer;}
-.dot.y{background:#febc2e;}
-.dot.g{background:#28c840;}
-.term-title{margin-left:auto;font-size:11px;color:var(--dim);letter-spacing:2px;display:flex;align-items:center;gap:12px;}
-.theme-btns{display:flex;gap:6px;}
-.tb{width:14px;height:14px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .2s,border-color .2s;}
-.tb:hover{transform:scale(1.3);}
-.tb.active{border-color:#fff;}
-.tb-g{background:#00ff88;} .tb-a{background:#ffb700;} .tb-c{background:#00e5ff;}
+.boot-logo-squares {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3px; width: 52px; height: 52px;
+}
+.boot-logo-sq { border-radius: 2px; }
+.boot-logo-sq:nth-child(1) { background: #f05000; }
+.boot-logo-sq:nth-child(2) { background: #80b000; }
+.boot-logo-sq:nth-child(3) { background: #0080f0; }
+.boot-logo-sq:nth-child(4) { background: #f0c000; }
+.boot-logo-text { color: #fff; }
+.boot-logo-text .win { font-size: 38px; font-weight: 300; letter-spacing: -1px; font-family: "Tahoma", Arial; }
+.boot-logo-text .version { font-size: 13px; color: #aaceff; letter-spacing: 1px; font-family: "Tahoma"; }
+
+.boot-progress-wrap {
+  width: 300px;
+  border: 1px solid #6688cc;
+  background: #00006a;
+  height: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.boot-progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(to right, #3060c0, #80aaff);
+  transition: width .3s ease;
+  box-shadow: 0 0 8px rgba(100,160,255,0.6);
+}
+.boot-copyright {
+  color: #aaceff; font-size: 10px; margin-top: 14px;
+  font-family: "Tahoma", Arial;
+}
+
+/* ── MAIN LAYOUT ─────────────────────────────────────────── */
+#desktop {
+  display: none;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 8px;
+  position: relative;
+  z-index: 1;
+}
+#desktop.visible { display: flex; }
+
+#main-window {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── TERMINAL CONTENT ────────────────────────────────────── */
+#terminal-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 10px;
+  font-family: "Lucida Console", "Courier New", monospace;
+  font-size: 12px;
+  color: #000;
+  background: #fff;
+  min-height: 300px;
+  max-height: calc(100vh - 260px);
+}
 
 /* ASCII banner */
 #ascii-banner {
-  padding:24px 20px 0; white-space:pre;
-  font-size:clamp(6px,1.15vw,12px); line-height:1.3;
-  color:var(--accent); font-family:'Share Tech Mono',monospace;
-  text-shadow:0 0 14px var(--accent-glow);
-  animation:flicker 5s infinite;
+  white-space: pre;
+  font-size: clamp(5px, 0.95vw, 10px);
+  line-height: 1.2;
+  color: #000080;
+  font-family: "Lucida Console", monospace;
+  margin-bottom: 8px;
 }
-@keyframes flicker{0%,94%,100%{opacity:1;}95%{opacity:.8;}96%{opacity:1;}97%{opacity:.85;}}
 
-/* Welcome */
+/* Welcome block */
 .welcome-block {
-  margin:10px 20px; padding:14px 18px;
-  font-size:12px; line-height:1.9;
-  border-left:2px solid var(--accent-dim);
-  background:var(--accent-glow); color:#7aad7a;
+  margin: 4px 0 8px;
+  padding: 6px 10px;
+  background: #ece9d8;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  font-size: 11px;
+  line-height: 1.7;
+  color: #000;
 }
-.welcome-block .wn{color:var(--accent);font-weight:700;font-size:14px;}
-.welcome-block a{color:var(--cyan);text-decoration:none;}
-.welcome-block a:hover{text-decoration:underline;}
+.welcome-block .wn { color: #000080; font-weight: bold; font-size: 12px; }
+.welcome-block a { color: #0000cc; }
+.welcome-block a:hover { text-decoration: underline; }
+.welcome-block .hint { color: #555; }
 
-/* Output */
-#output{flex:1;padding:8px 20px;}
-.cmd-block{margin-bottom:16px;}
-.prompt-line{display:flex;align-items:center;flex-wrap:wrap;font-size:14px;line-height:1.6;}
-.p-user{color:var(--accent);font-weight:700;}
-.p-at{color:var(--accent-dim);}
-.p-host{color:var(--cyan);font-weight:700;}
-.p-colon{color:var(--accent-dim);}
-.p-path{color:var(--amber);}
-.p-dollar{color:#aaa;margin:0 6px;}
-.p-cmd{color:#fff;}
-.cmd-output{margin-top:7px;font-size:13px;line-height:1.85;padding-left:12px;border-left:1px solid var(--border);}
+/* Output blocks */
+#output { padding: 0; }
+.cmd-block { margin-bottom: 10px; }
+.prompt-line {
+  display: flex; align-items: center; flex-wrap: wrap;
+  font-size: 12px; line-height: 1.6;
+  font-family: "Lucida Console", monospace;
+}
+.p-user   { color: #000080; font-weight: bold; }
+.p-at     { color: #555; }
+.p-host   { color: #800000; font-weight: bold; }
+.p-colon  { color: #555; }
+.p-path   { color: #806000; }
+.p-dollar { color: #555; margin: 0 4px; }
+.p-cmd    { color: #000; }
+
+.cmd-output {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.8;
+  padding-left: 8px;
+  border-left: 2px solid #d4d0c8;
+  font-family: "Lucida Console", monospace;
+  white-space: pre-wrap;
+}
+
+/* Utility colors — win2k-ified */
+.hl-green  { color: #006400; font-weight: bold; }
+.hl-cyan   { color: #006080; }
+.hl-amber  { color: #806000; }
+.hl-red    { color: #800000; }
+.hl-white  { color: #000; font-weight: bold; }
+.hl-dim    { color: #808080; }
+.hl-purple { color: #800080; }
+.divider   { border: none; border-top: 1px solid #d4d0c8; margin: 6px 0; }
+.blink     { animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.tag {
+  display: inline-block; padding: 0 5px; font-size: 9px;
+  font-weight: bold; letter-spacing: 1px; border: 1px solid;
+  margin-right: 4px;
+}
+.tag-web { background: #e0f0ff; color: #000080; border-color: #000080; }
+.tag-py  { background: #fffff0; color: #806000; border-color: #806000; }
+.tag-sec { background: #fff0f0; color: #800000; border-color: #800000; }
+.tag-edu { background: #f0fff0; color: #006400; border-color: #006400; }
+.tag-sys { background: #f8f0ff; color: #800080; border-color: #800080; }
+
+.project-card {
+  border: 1px solid #808080;
+  padding: 8px 12px;
+  margin: 6px 0;
+  background: #ece9d8;
+  cursor: pointer;
+  position: relative;
+}
+.project-card:hover { background: #ddd8c8; border-color: #000080; }
+.project-card::before { content: '▶'; position: absolute; left: -12px; color: #000080; font-size: 8px; top: 12px; }
+
+/* Skill bars */
+.sb-wrap   { margin: 4px 0; }
+.sb-label  { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 2px; }
+.sb-track  { height: 14px; background: #ece9d8; border-top: 1px solid #808080; border-left: 1px solid #808080; border-right: 1px solid #fff; border-bottom: 1px solid #fff; overflow: hidden; width: 280px; max-width: 100%; }
+.sb-fill   { height: 100%; width: 0; transition: width .9s cubic-bezier(.25,.8,.25,1); }
+
+/* Progress */
+.prog-wrap  { display: flex; align-items: center; gap: 8px; font-size: 11px; margin: 4px 0; }
+.prog-track { height: 14px; width: 200px; background: #ece9d8; border-top: 1px solid #808080; border-left: 1px solid #808080; border-right: 1px solid #fff; border-bottom: 1px solid #fff; overflow: hidden; }
+.prog-fill  { height: 100%; background: #000080; width: 0; transition: width 1.5s ease; }
+
+/* Help table */
+.help-table  { border-collapse: collapse; }
+.help-table td { padding: 2px 12px 2px 0; font-size: 11px; vertical-align: top; }
+.help-table td:first-child { color: #000080; min-width: 160px; font-weight: bold; }
+.help-table td:last-child  { color: #444; }
 
 /* ── AUTOCOMPLETE ────────────────────────────────────────── */
 #autocomplete {
-  display:none; position:fixed;
-  background:var(--bg3); border:1px solid var(--accent-dim);
-  border-radius:4px; z-index:600; min-width:260px;
-  box-shadow:0 4px 24px rgba(0,0,0,.7);
-  max-height:230px; overflow-y:auto;
+  display: none;
+  position: fixed;
+  background: #fff;
+  border: 1px solid #808080;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+  z-index: 600;
+  min-width: 240px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 .ac-item {
-  padding:7px 14px; font-size:12px; color:#999; cursor:pointer;
-  display:flex; align-items:center; gap:10px; transition:background .1s;
+  padding: 3px 10px; font-size: 11px; color: #000; cursor: pointer;
+  display: flex; align-items: center; gap: 8px;
+  font-family: "Tahoma", Arial;
 }
-.ac-item:hover,.ac-item.ac-sel{background:var(--accent-glow);color:var(--accent);}
-.ac-icon{font-size:10px;color:var(--accent-dim);}
-.ac-desc{font-size:10px;color:var(--dim);margin-left:auto;white-space:nowrap;}
+.ac-item:hover, .ac-item.ac-sel { background: #000080; color: #fff; }
+.ac-item:hover .ac-desc, .ac-item.ac-sel .ac-desc { color: #aaccff; }
+.ac-icon { font-size: 9px; color: #555; }
+.ac-desc { font-size: 9px; color: #808080; margin-left: auto; white-space: nowrap; }
 
 /* ── INPUT AREA ──────────────────────────────────────────── */
 #input-area {
-  display:none; position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-  width:100%; max-width:1000px; background:var(--bg2);
-  border-top:1px solid var(--border); z-index:400;
+  display: none;
+  background: #d4d0c8;
+  border-top: 2px solid #fff;
 }
-#input-area.visible{display:block;}
-#input-row{display:flex;align-items:center;padding:11px 16px;gap:0;}
-#cli-input{
-  flex:1;background:transparent;border:none;outline:none;
-  color:#fff;font-family:'JetBrains Mono',monospace;
-  font-size:14px;caret-color:var(--accent);
+#input-area.visible { display: block; }
+
+#input-row {
+  display: flex; align-items: center; padding: 4px 8px; gap: 4px;
 }
-#cli-input::placeholder{color:var(--dim);font-size:12px;}
+.input-prompt-label {
+  font-family: "Lucida Console", monospace;
+  font-size: 12px; white-space: nowrap; color: #000;
+}
+#cli-input {
+  flex: 1; height: 22px;
+  background: #fff;
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  padding: 0 4px;
+  font-family: "Lucida Console", monospace;
+  font-size: 12px; color: #000;
+  outline: none;
+  caret-color: #000;
+}
+#cli-input::placeholder { color: #aaa; font-size: 10px; }
 
 /* Quick commands bar */
 #quick-cmds {
-  display:flex; gap:7px; padding:7px 14px 10px;
-  overflow-x:auto; -webkit-overflow-scrolling:touch;
-  border-top:1px solid var(--border); scrollbar-width:none;
+  display: flex; gap: 3px; padding: 4px 8px 5px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  border-top: 1px solid #808080; scrollbar-width: none;
+  background: #d4d0c8;
+  flex-wrap: wrap;
 }
-#quick-cmds::-webkit-scrollbar{display:none;}
+#quick-cmds::-webkit-scrollbar { display: none; }
 .qc {
-  flex-shrink:0; padding:5px 12px;
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  background:var(--bg3); border:1px solid var(--border);
-  color:var(--accent); border-radius:3px; cursor:pointer;
-  transition:background .15s,border-color .15s; white-space:nowrap;
-  user-select:none; -webkit-tap-highlight-color:transparent;
+  flex-shrink: 0; padding: 1px 8px;
+  font-family: "Tahoma", Arial, sans-serif; font-size: 10px;
+  background: #d4d0c8;
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #808080;
+  border-bottom: 1px solid #808080;
+  color: #000; cursor: pointer;
+  user-select: none; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
-.qc:hover,.qc:active{background:var(--accent-glow);border-color:var(--accent-dim);}
-
-/* ── UTILITY ─────────────────────────────────────────────── */
-.hl-green{color:var(--accent);font-weight:700;}
-.hl-cyan{color:var(--cyan);}
-.hl-amber{color:var(--amber);}
-.hl-red{color:var(--red);}
-.hl-white{color:#fff;}
-.hl-dim{color:#555;}
-.hl-purple{color:var(--purple);}
-.divider{border:none;border-top:1px dashed var(--border);margin:10px 0;}
-.blink{animation:blink 1s step-end infinite;}
-@keyframes blink{50%{opacity:0;}}
-
-.tag{display:inline-block;padding:1px 7px;font-size:10px;font-weight:700;letter-spacing:1px;border-radius:2px;margin-right:6px;}
-.tag-web{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid var(--cyan);}
-.tag-py{background:rgba(255,183,0,.1);color:var(--amber);border:1px solid var(--amber);}
-.tag-sec{background:rgba(255,71,87,.15);color:var(--red);border:1px solid var(--red);}
-.tag-edu{background:rgba(0,255,136,.1);color:var(--accent);border:1px solid var(--accent);}
-.tag-sys{background:rgba(199,146,234,.1);color:var(--purple);border:1px solid var(--purple);}
-
-.project-card{border:1px solid var(--border);padding:12px 16px;margin:8px 0;background:var(--accent-glow);position:relative;cursor:pointer;transition:border-color .2s;}
-.project-card:hover{border-color:var(--accent-dim);}
-.project-card::before{content:'▶';position:absolute;left:-12px;color:var(--accent);font-size:9px;top:15px;}
-
-/* Skill bars */
-.sb-wrap{margin:5px 0;}
-.sb-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px;}
-.sb-track{height:5px;background:#1a2e1a;border-radius:3px;overflow:hidden;width:320px;max-width:100%;}
-.sb-fill{height:100%;border-radius:3px;box-shadow:0 0 8px var(--accent-glow);width:0;transition:width .9s cubic-bezier(.25,.8,.25,1);}
-
-/* Progress */
-.prog-wrap{display:flex;align-items:center;gap:10px;font-size:12px;margin:4px 0;}
-.prog-track{height:6px;width:220px;background:#1a2e1a;border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent-dim),var(--accent));width:0;transition:width 1.5s ease;}
-
-/* Help table */
-.help-table{border-collapse:collapse;}
-.help-table td{padding:3px 14px 3px 0;font-size:13px;vertical-align:top;}
-.help-table td:first-child{color:var(--accent);min-width:170px;}
-.help-table td:last-child{color:#666;}
+.qc:hover { background: #e8e6de; }
+.qc:active {
+  border-top: 1px solid #808080;
+  border-left: 1px solid #808080;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  padding: 2px 7px 0 9px;
+}
 
 /* Matrix */
-#matrix-canvas{display:none;position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.94);}
-#m-hint{display:none;position:fixed;bottom:28px;left:50%;transform:translateX(-50%);color:var(--accent);font-size:12px;z-index:710;font-family:'Share Tech Mono',monospace;animation:blink 1.5s step-end infinite;pointer-events:none;}
+#matrix-canvas { display: none; position: fixed; inset: 0; z-index: 700; background: rgba(0,0,0,.95); }
+#m-hint {
+  display: none; position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  color: #00ff88; font-size: 11px; z-index: 710;
+  font-family: "Lucida Console", monospace;
+  animation: blink 1.5s step-end infinite; pointer-events: none;
+}
 
 /* Scrollbar */
-::-webkit-scrollbar{width:4px;height:4px;}
-::-webkit-scrollbar-track{background:#000;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
-::-webkit-scrollbar-thumb:hover{background:var(--accent-dim);}
+::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-track { background: #d4d0c8; border: 1px solid #808080; }
+::-webkit-scrollbar-thumb {
+  background: #c0bdb5;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+::-webkit-scrollbar-button {
+  background: #d4d0c8; display: block; height: 16px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+}
+::-webkit-scrollbar-corner { background: #d4d0c8; }
+
+/* ── TASKBAR ─────────────────────────────────────────────── */
+#taskbar {
+  background: linear-gradient(to bottom, #2264c8, #1050a8 40%, #2878e0);
+  border-top: 2px solid #4494f0;
+  padding: 2px 4px;
+  display: flex; align-items: center; gap: 4px;
+  position: relative; z-index: 20;
+  margin-top: auto;
+}
+#start-btn {
+  display: flex; align-items: center; gap: 4px;
+  background: linear-gradient(to bottom, #4ca050, #3a8840, #4ca050);
+  border: 2px solid #2a6030;
+  border-radius: 10px;
+  padding: 2px 10px 2px 6px;
+  color: #fff; font-weight: bold; font-size: 12px;
+  cursor: pointer; user-select: none;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+#start-btn:active { background: linear-gradient(to bottom, #3a8040, #2a6830, #3a8040); }
+#start-btn .start-logo { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; width: 12px; height: 12px; }
+#start-btn .start-logo span { border-radius: 1px; }
+#start-btn .start-logo span:nth-child(1) { background: #f05000; }
+#start-btn .start-logo span:nth-child(2) { background: #80b000; }
+#start-btn .start-logo span:nth-child(3) { background: #0080f0; }
+#start-btn .start-logo span:nth-child(4) { background: #f0c000; }
+
+.taskbar-sep { width: 1px; height: 28px; background: rgba(255,255,255,0.2); margin: 0 2px; }
+
+.task-btn {
+  padding: 2px 10px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 2px;
+  color: #fff; font-size: 10px; font-family: "Tahoma", Arial;
+  cursor: pointer; white-space: nowrap; user-select: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.6);
+}
+.task-btn.active {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+}
+
+#systray {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(0,0,0,0.15);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 2px 8px;
+  border-radius: 2px;
+  color: #fff; font-size: 10px; font-family: "Tahoma", Arial;
+}
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
-@media(max-width:620px){
-  #ascii-banner{font-size:4.5px;}
-  #bar-path-txt{display:none;}
-  .cmd-output{font-size:12px;}
-  .sb-track{width:160px;}
-  .help-table td:first-child{min-width:120px;}
-  #input-row{padding:9px 12px;}
-  #cli-input{font-size:13px;}
+@media (max-width: 620px) {
+  #ascii-banner { font-size: 3.5px; }
+  .sb-track { width: 140px; }
+  .help-table td:first-child { min-width: 100px; }
+  #input-row { padding: 3px 6px; }
+  #cli-input { font-size: 11px; }
+  #main-window { margin: 0; }
+  #desktop { padding: 4px; }
 }
-@media(max-width:400px){
-  #ascii-banner{font-size:3.5px;padding:12px 10px 0;}
+@media (max-width: 400px) {
+  #ascii-banner { font-size: 2.5px; padding: 4px 4px 0; }
 }
 </style>
 </head>
-<body data-theme="green">
+<body>
 
-<div id="boot-screen"></div>
+<!-- ════════ BOOT SCREEN ════════════════════════════════════ -->
+<div id="boot-screen">
+  <div class="boot-logo">
+    <div class="boot-logo-squares">
+      <div class="boot-logo-sq"></div>
+      <div class="boot-logo-sq"></div>
+      <div class="boot-logo-sq"></div>
+      <div class="boot-logo-sq"></div>
+    </div>
+    <div class="boot-logo-text">
+      <div class="win">Windows</div>
+      <div class="version">2000 Professional &nbsp;·&nbsp; Birdgito Edition</div>
+    </div>
+  </div>
+  <div class="boot-progress-wrap">
+    <div class="boot-progress-bar" id="boot-bar"></div>
+  </div>
+  <div class="boot-copyright">Copyright &copy; 2025 Birdgito Systems. All rights reserved.</div>
+</div>
+
 <canvas id="matrix-canvas"></canvas>
 <div id="m-hint">Press any key or tap to exit the Matrix</div>
 <div id="autocomplete"></div>
 
-<div id="terminal">
-  <div class="term-bar">
-    <div class="dot r" onclick="if(confirm('Leave birdgito.in?'))window.close()"></div>
-    <div class="dot y"></div>
-    <div class="dot g"></div>
-    <div class="term-title">
-      <span id="bar-path-txt">pankaj@birdgito:~</span>
-      <div class="theme-btns">
-        <div class="tb tb-g active" title="Green"  onclick="setTheme('green')"></div>
-        <div class="tb tb-a"        title="Amber"  onclick="setTheme('amber')"></div>
-        <div class="tb tb-c"        title="Cyan"   onclick="setTheme('cyan')"></div>
-      </div>
-    </div>
-  </div>
+<!-- ════════ DESKTOP ════════════════════════════════════════ -->
+<div id="desktop">
 
-  <pre id="ascii-banner">
+  <!-- ── Main Window ─────────────────────────────────────── -->
+  <div id="main-window" class="window">
+    <div class="window-inner">
+
+      <!-- Title bar -->
+      <div class="titlebar">
+        <!-- Monitor icon (inline SVG) -->
+        <svg class="tb-icon" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="1" y="1" width="14" height="10" rx="1" fill="#aaceff" stroke="#fff" stroke-width="0.5"/>
+          <rect x="2" y="2" width="12" height="8" fill="#000080"/>
+          <rect x="3" y="3" width="10" height="6" fill="#1a3a8a"/>
+          <!-- Screen content hint -->
+          <line x1="4" y1="5" x2="10" y2="5" stroke="#00ff88" stroke-width="0.8"/>
+          <line x1="4" y1="7" x2="8" y2="7" stroke="#00ff88" stroke-width="0.8"/>
+          <rect x="6" y="11" width="4" height="1.5" fill="#888"/>
+          <rect x="4" y="12.5" width="8" height="1" fill="#888"/>
+        </svg>
+        <span class="tb-title">Birdgito Terminal — pankaj@birdgito:~</span>
+        <div class="tb-btns">
+          <div class="tb-btn" title="Minimize" onclick="document.getElementById('terminal-content').style.display='none'">_</div>
+          <div class="tb-btn" title="Maximize">&#9633;</div>
+          <div class="tb-btn" style="background:#d4d0c8;" title="Close" onclick="if(confirm('Leave birdgito.in?'))window.close()">&#x2715;</div>
+        </div>
+      </div>
+
+      <!-- Menu bar -->
+      <div class="menubar">
+        <div class="menubar-item">File</div>
+        <div class="menubar-item">Edit</div>
+        <div class="menubar-item">View</div>
+        <div class="menubar-item">Favorites</div>
+        <div class="menubar-item">Tools</div>
+        <div class="menubar-item">Help</div>
+      </div>
+
+      <!-- Toolbar (quick commands) -->
+      <div class="toolbar">
+        <button class="tool-btn" onclick="fireCmd('help')">&#9655; Help</button>
+        <button class="tool-btn" onclick="fireCmd('whoami')">&#128100; whoami</button>
+        <button class="tool-btn" onclick="fireCmd('about')">&#128196; about</button>
+        <button class="tool-btn" onclick="fireCmd('projects')">&#128193; projects</button>
+        <button class="tool-btn" onclick="fireCmd('skills')">&#9881; skills</button>
+        <button class="tool-btn" onclick="fireCmd('education')">&#127979; education</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="fireCmd('cat hexamart')">hexamart</button>
+        <button class="tool-btn" onclick="fireCmd('cat libsys')">libsys</button>
+        <button class="tool-btn" onclick="fireCmd('cat osint')">osint</button>
+        <button class="tool-btn" onclick="fireCmd('cat resume')">resume</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="fireCmd('neofetch')">neofetch</button>
+        <button class="tool-btn" onclick="fireCmd('git log')">git log</button>
+        <button class="tool-btn" onclick="fireCmd('nmap localhost')">nmap</button>
+        <button class="tool-btn" onclick="fireCmd('contact')">contact</button>
+        <div class="tool-sep"></div>
+        <button class="tool-btn" onclick="fireCmd('matrix')" style="color:#006400;">matrix &#x1F430;</button>
+        <button class="tool-btn" onclick="fireCmd('clear')" style="color:#800000;">clear</button>
+      </div>
+
+      <!-- Address bar -->
+      <div class="addrbar">
+        <span class="addrbar-label">Address</span>
+        <input class="addrbar-input" id="addr-bar-txt" value="C:\Users\pankaj\birdgito.in" readonly>
+        <button class="btn" onclick="inp.focus()" style="min-width:40px; padding:2px 6px;">Go</button>
+      </div>
+
+      <!-- Content area (sunken) -->
+      <div style="padding:4px; background:#d4d0c8;">
+        <div class="sunken" style="height:calc(100vh - 285px); display:flex; flex-direction:column; min-height:280px;">
+          <div id="terminal-content">
+
+            <pre id="ascii-banner">
   ██████╗ ██╗██████╗ ██████╗  ██████╗ ██╗████████╗ ██████╗
   ██╔══██╗██║██╔══██╗██╔══██╗██╔════╝ ██║╚══██╔══╝██╔═══██╗
   ██████╔╝██║██████╔╝██║  ██║██║  ███╗██║   ██║   ██║   ██║
   ██╔══██╗██║██╔══██╗██║  ██║██║   ██║██║   ██║   ██║   ██║
   ██████╔╝██║██║  ██║██████╔╝╚██████╔╝██║   ██║   ╚██████╔╝
   ╚═════╝ ╚═╝╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝   ╚═╝    ╚═════╝
-  </pre>
+            </pre>
 
-  <div class="welcome-block">
-    <span class="wn">Pankaj Mishra</span> &nbsp;|&nbsp; <span style="color:var(--accent)">@Birdgito</span> &nbsp;|&nbsp; Chitrakoot, Uttar Pradesh 🇮🇳<br>
-    BCA Student &nbsp;·&nbsp; Full-Stack Developer &nbsp;·&nbsp; Security Enthusiast<br>
-    <a href="https://github.com/Birdgito" target="_blank">⌥ github.com/Birdgito</a> &emsp;
-    <a href="https://www.linkedin.com/in/birdgito/" target="_blank">⌥ linkedin.com/in/birdgito</a><br>
-    <span style="color:var(--dim)">Type <span style="color:var(--accent)">help</span> to explore &nbsp;·&nbsp; ↑↓ history &nbsp;·&nbsp; Tab autocomplete &nbsp;·&nbsp; tap buttons ↓</span>
+            <div class="welcome-block">
+              <span class="wn">Pankaj Mishra</span> &nbsp;|&nbsp; <span style="color:#000080">@Birdgito</span> &nbsp;|&nbsp; Chitrakoot, Uttar Pradesh &#127470;&#127475;<br>
+              BCA Student &nbsp;&middot;&nbsp; Full-Stack Developer &nbsp;&middot;&nbsp; Security Enthusiast<br>
+              <a href="https://github.com/Birdgito" target="_blank">github.com/Birdgito</a> &emsp;
+              <a href="https://www.linkedin.com/in/birdgito/" target="_blank">linkedin.com/in/birdgito</a><br>
+              <span class="hint">Type <strong>help</strong> to explore &nbsp;&middot;&nbsp; &uarr;&darr; history &nbsp;&middot;&nbsp; Tab autocomplete &nbsp;&middot;&nbsp; click toolbar buttons &uarrow;</span>
+            </div>
+
+            <div id="output"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input area -->
+      <div id="input-area">
+        <div id="input-row">
+          <span class="input-prompt-label">
+            <span class="p-user">pankaj</span><span class="p-at">@</span><span class="p-host">birdgito</span><span class="p-colon">:</span><span class="p-path" id="cwd-span">~</span><span class="p-dollar">$</span>
+          </span>
+          <input id="cli-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="type a command and press Enter…">
+          <button class="btn" onclick="run(inp.value);inp.value='';" style="min-width:50px;">Run</button>
+        </div>
+        <div id="quick-cmds">
+          <button class="qc" onclick="fireCmd('help')">help</button>
+          <button class="qc" onclick="fireCmd('whoami')">whoami</button>
+          <button class="qc" onclick="fireCmd('about')">about</button>
+          <button class="qc" onclick="fireCmd('projects')">projects</button>
+          <button class="qc" onclick="fireCmd('skills')">skills</button>
+          <button class="qc" onclick="fireCmd('education')">education</button>
+          <button class="qc" onclick="fireCmd('cat hexamart')">hexamart</button>
+          <button class="qc" onclick="fireCmd('cat libsys')">libsys</button>
+          <button class="qc" onclick="fireCmd('cat osint')">osint</button>
+          <button class="qc" onclick="fireCmd('cat resume')">resume</button>
+          <button class="qc" onclick="fireCmd('neofetch')">neofetch</button>
+          <button class="qc" onclick="fireCmd('git log')">git log</button>
+          <button class="qc" onclick="fireCmd('nmap localhost')">nmap</button>
+          <button class="qc" onclick="fireCmd('contact')">contact</button>
+          <button class="qc" onclick="fireCmd('matrix')">matrix &#x1F430;</button>
+          <button class="qc" onclick="fireCmd('clear')">clear</button>
+        </div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="statusbar">
+        <div class="status-panel" id="status-left">Ready</div>
+        <div class="status-panel" id="bar-path-txt">pankaj@birdgito:~</div>
+        <div class="status-panel" style="margin-left:auto;">birdgito.in</div>
+      </div>
+
+    </div>
   </div>
 
-  <div id="output"></div>
-</div>
+  <!-- ── Taskbar ──────────────────────────────────────────── -->
+  <div id="taskbar">
+    <div id="start-btn">
+      <div class="start-logo">
+        <span></span><span></span><span></span><span></span>
+      </div>
+      start
+    </div>
+    <div class="taskbar-sep"></div>
+    <div class="task-btn active">&#128196; Birdgito Terminal</div>
+    <div id="systray" id="systray">
+      <span id="clock">00:00</span>
+    </div>
+  </div>
 
-<div id="input-area">
-  <div id="input-row">
-    <span class="p-user">pankaj</span><span class="p-at">@</span><span class="p-host">birdgito</span><span class="p-colon">:</span><span class="p-path" id="cwd-span">~</span><span class="p-dollar">$</span>&nbsp;
-    <input id="cli-input" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="type a command…">
-  </div>
-  <div id="quick-cmds">
-    <button class="qc" onclick="fireCmd('help')">help</button>
-    <button class="qc" onclick="fireCmd('whoami')">whoami</button>
-    <button class="qc" onclick="fireCmd('about')">about</button>
-    <button class="qc" onclick="fireCmd('projects')">projects</button>
-    <button class="qc" onclick="fireCmd('skills')">skills</button>
-    <button class="qc" onclick="fireCmd('education')">education</button>
-    <button class="qc" onclick="fireCmd('cat hexamart')">hexamart</button>
-    <button class="qc" onclick="fireCmd('cat libsys')">libsys</button>
-    <button class="qc" onclick="fireCmd('cat osint')">osint</button>
-    <button class="qc" onclick="fireCmd('cat resume')">resume</button>
-    <button class="qc" onclick="fireCmd('neofetch')">neofetch</button>
-    <button class="qc" onclick="fireCmd('git log')">git log</button>
-    <button class="qc" onclick="fireCmd('nmap localhost')">nmap</button>
-    <button class="qc" onclick="fireCmd('contact')">contact</button>
-    <button class="qc" onclick="fireCmd('matrix')">matrix 🐇</button>
-    <button class="qc" onclick="fireCmd('clear')">clear</button>
-  </div>
-</div>
+</div><!-- /#desktop -->
 
 <script>
 'use strict';
 
 /* ═══════════ BOOT ════════════════════════════════════════ */
-const bootLines = [
-  {t:'BIOS v3.1.4 — Birdgito Systems',           c:'bright', d:0},
-  {t:'CPU  : Pankaj Mishra Core™ i∞ @ 4.0 GHz',  c:'bright', d:70},
-  {t:'RAM  : 8192 MB DDR4 — PASSED',              c:'ok',     d:140},
-  {t:'NVMe : /dev/nvme0n1  [birdgito.in]  256 GB',c:'bright', d:210},
-  {t:'',                                           c:'',       d:300},
-  {t:'Starting GRUB bootloader...',                c:'',       d:360},
-  {t:'',                                           c:'',       d:410},
-  {t:'  [  OK  ] Started kernel init process',    c:'ok',     d:460},
-  {t:'  [  OK  ] Mounted /home/pankaj',            c:'ok',     d:530},
-  {t:'  [  OK  ] Started NetworkManager',          c:'ok',     d:600},
-  {t:'  [  OK  ] Loaded SSH keypair',              c:'ok',     d:670},
-  {t:'  [  OK  ] Initialised project database',   c:'ok',     d:740},
-  {t:'  [  OK  ] Loaded OSINT toolchain v2.4',    c:'ok',     d:810},
-  {t:'  [ WARN ] Cookie popup: DISABLED (good)',  c:'warn',   d:880},
-  {t:'  [  OK  ] Compiled portfolio assets',      c:'ok',     d:950},
-  {t:'  [  OK  ] birdgito.in — ONLINE 🚀',        c:'ok',     d:1020},
-  {t:'',                                           c:'',       d:1090},
-  {t:'systemd[1]: Reached target: multi-user',    c:'info',   d:1150},
-  {t:'',                                           c:'',       d:1190},
-  {t:'Birdgito GNU/Linux 6.6.0-LTS  —  birdgito.in', c:'info', d:1260},
-  {t:'',                                           c:'',       d:1300},
-  {t:'birdgito login: pankaj',                    c:'bright', d:1400},
-  {t:'Password: ●●●●●●●●●●',                      c:'bright', d:1690},
-  {t:'',                                           c:'',       d:1820},
-  {t:'Last login: Today from 127.0.0.1',          c:'bright', d:1910},
-  {t:'Welcome back, Pankaj! Have a great session.', c:'ok',   d:1990},
-];
+const bootBar = document.getElementById('boot-bar');
+const bootEl  = document.getElementById('boot-screen');
+let bootPct   = 0;
+const bootInterval = setInterval(() => {
+  bootPct += Math.random() * 18 + 4;
+  if (bootPct > 100) bootPct = 100;
+  bootBar.style.width = bootPct + '%';
+  if (bootPct >= 100) {
+    clearInterval(bootInterval);
+    setTimeout(() => {
+      bootEl.classList.add('fade-out');
+      setTimeout(() => {
+        bootEl.style.display = 'none';
+        document.getElementById('desktop').classList.add('visible');
+        document.getElementById('input-area').classList.add('visible');
+        inp.focus();
+      }, 600);
+    }, 600);
+  }
+}, 120);
 
-const bootEl = document.getElementById('boot-screen');
-bootLines.forEach(({t,c,d}) => {
-  setTimeout(() => {
-    const el = document.createElement('div');
-    el.className = 'boot-line' + (c ? ' '+c : '');
-    el.textContent = t;
-    bootEl.appendChild(el);
-    bootEl.scrollTop = bootEl.scrollHeight;
-  }, d);
-});
-setTimeout(() => {
-  bootEl.classList.add('fade-out');
-  setTimeout(() => {
-    bootEl.style.display = 'none';
-    document.getElementById('terminal').classList.add('visible');
-    document.getElementById('input-area').classList.add('visible');
-    inp.focus();
-  }, 700);
-}, 2900);
-
-/* ═══════════ THEME ═══════════════════════════════════════ */
-function setTheme(t) {
-  document.body.setAttribute('data-theme', t);
-  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
-  document.querySelector('.tb-' + t[0]).classList.add('active');
-  localStorage.setItem('bg-theme', t);
+/* ═══════════ CLOCK ═══════════════════════════════════════ */
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = h + ':' + m;
 }
-const st = localStorage.getItem('bg-theme');
-if (st) setTheme(st);
+updateClock();
+setInterval(updateClock, 30000);
 
 /* ═══════════ STATE ═══════════════════════════════════════ */
 const inp      = document.getElementById('cli-input');
 const output   = document.getElementById('output');
 const cwdSpan  = document.getElementById('cwd-span');
 const barPath  = document.getElementById('bar-path-txt');
+const addrBar  = document.getElementById('addr-bar-txt');
 const acDrop   = document.getElementById('autocomplete');
+const statusL  = document.getElementById('status-left');
 
 let cmdHistory = JSON.parse(localStorage.getItem('bg-history') || '[]');
 let histIdx    = -1;
@@ -379,6 +815,7 @@ function setDir(d) {
   currentDir = d;
   cwdSpan.textContent = d;
   if (barPath) barPath.textContent = 'pankaj@birdgito:' + d;
+  if (addrBar) addrBar.value = 'C:\\Users\\pankaj\\birdgito.in\\' + (d === '~' ? '' : d.replace('~/', ''));
 }
 
 /* ═══════════ COMMANDS ════════════════════════════════════ */
@@ -400,16 +837,17 @@ const CMD_META = {
 };
 
 function bar(label, pct, col) {
-  const c = col==='amber'?'var(--amber)':col==='red'?'var(--red)':col==='cyan'?'var(--cyan)':'var(--accent)';
-  return `<div class="sb-wrap"><div class="sb-label"><span style="color:${c}">${label}</span><span class="hl-dim">${pct}</span></div><div class="sb-track"><div class="sb-fill" data-w="${pct}" style="background:linear-gradient(90deg,${c}88,${c})"></div></div></div>`;
+  const c = col==='amber'?'#806000':col==='red'?'#800000':col==='cyan'?'#006080':'#006400';
+  const bg = col==='amber'?'#c08000':col==='red'?'#a00000':col==='cyan'?'#0080a0':'#008040';
+  return `<div class="sb-wrap"><div class="sb-label"><span style="color:${c}">${label}</span><span class="hl-dim">${pct}</span></div><div class="sb-track"><div class="sb-fill" data-w="${pct}" style="background:${bg}"></div></div></div>`;
 }
-function esc(t){ return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function esc(t) { return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 const CMDS = {
 help:()=>`
-<span class="hl-green">╔══════════════════════════════════════════════════════════╗</span>
-<span class="hl-green">║           Birdgito Shell v3 — Command Reference          ║</span>
-<span class="hl-green">╚══════════════════════════════════════════════════════════╝</span>
+<span class="hl-white">╔══════════════════════════════════════════════════════════╗</span>
+<span class="hl-white">║           Birdgito Shell v3 — Command Reference          ║</span>
+<span class="hl-white">╚══════════════════════════════════════════════════════════╝</span>
 
 <table class="help-table">
 <tr><td>whoami</td><td>Who is Pankaj Mishra?</td></tr>
@@ -456,7 +894,7 @@ University : <span class="hl-cyan">Sadguru Institute of Computer Studies, Chitra
              <span class="hl-dim">Affiliated: MCNUJC, Bhopal</span>
 Shell      : <span class="hl-dim">/bin/bash 5.2.15</span>
 Domain     : <span class="hl-green">birdgito.in</span>
-GitHub     : <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+GitHub     : <a href="https://github.com/Birdgito" target="_blank" style="color:#0000cc">github.com/Birdgito</a>
 `,
 
 about:()=>`
@@ -534,19 +972,19 @@ projects:()=>`
 <div class="project-card" onclick="fireCmd('cat hexamart')">
   <span class="tag tag-web">WEB</span> <span class="hl-white">hexamart</span>
   <span class="hl-dim">E-commerce platform focused on tech &amp; electronics</span>
-  <span style="color:var(--dim);font-size:11px;">→ cat hexamart</span>
+  <span style="color:#808080;font-size:10px;">→ cat hexamart</span>
 </div>
 <div class="project-card" onclick="fireCmd('cat libsys')">
   <span class="tag tag-sys">SYSTEM</span> <span class="hl-white">libsys</span>
   <span class="hl-dim">Library Management System — streamline library workflows</span>
-  <span style="color:var(--dim);font-size:11px;">→ cat libsys</span>
+  <span style="color:#808080;font-size:10px;">→ cat libsys</span>
 </div>
 <div class="project-card" onclick="fireCmd('cat osint')">
   <span class="tag tag-sec">SEC</span> <span class="hl-white">osint</span>
   <span class="hl-dim">Cybersecurity OSINT toolkit — intelligence gathering</span>
-  <span style="color:var(--dim);font-size:11px;">→ cat osint</span>
+  <span style="color:#808080;font-size:10px;">→ cat osint</span>
 </div>
-<span class="hl-dim" style="font-size:11px;">Tip: click a card or type the command above.</span>
+<span class="hl-dim" style="font-size:10px;">Tip: click a card or type the command above.</span>
 `,
 
 'cat hexamart':()=>`
@@ -572,7 +1010,7 @@ projects:()=>`
   Database : <span class="hl-cyan">MySQL</span>
 
 <span class="hl-cyan">── Repo ─────────────────────────────────────────────</span>
-  <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
+  <a href="https://github.com/Birdgito" target="_blank" style="color:#0000cc">github.com/Birdgito</a>
 `,
 
 'cat libsys':()=>`
@@ -627,7 +1065,7 @@ projects:()=>`
 <span class="hl-amber">── ~/resume.txt ─────────────────────────────────────</span>
 
 <span class="hl-white">PANKAJ MISHRA</span>  <span class="hl-dim">@Birdgito</span>
-Chitrakoot, U.P. · <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a> · <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+Chitrakoot, U.P. · <a href="https://github.com/Birdgito" target="_blank" style="color:#0000cc">github.com/Birdgito</a> · <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:#0000cc">linkedin.com/in/birdgito</a>
 <hr class="divider">
 <span class="hl-green">EDUCATION</span>
   BCA — Sadguru Institute of Computer Studies (MCNUJC)
@@ -675,7 +1113,7 @@ drwxr-xr-x  pankaj  birdgito  <span class="hl-cyan">osint/</span>`,
   return map[currentDir] || map['~'];
 },
 
-pwd:()=>`/home/pankaj${currentDir==='~'?'':'/'+currentDir.replace('~/','')  }`,
+pwd:()=>`/home/pankaj${currentDir==='~'?'':'/'+currentDir.replace('~/','') }`,
 'cd projects' :()=>{ setDir('~/projects');  return '<span class="hl-dim">→ /home/pankaj/projects</span>'; },
 'cd education':()=>{ setDir('~/education'); return '<span class="hl-dim">→ /home/pankaj/education</span>'; },
 'cd skills'   :()=>{ setDir('~/skills');    return '<span class="hl-dim">→ /home/pankaj/skills</span>'; },
@@ -689,7 +1127,7 @@ neofetch:()=>`
 <span class="hl-green">     .######.            </span>  <span class="hl-green">Host</span>     : birdgito.in
 <span class="hl-green">    .########.           </span>  <span class="hl-green">Uptime</span>   : Always building 🚀
 <span class="hl-green">   .##########.          </span>  <span class="hl-green">Shell</span>    : bash 5.2.15
-<span class="hl-green">  .####.  .####.         </span>  <span class="hl-green">Theme</span>    : Matrix Green (Dark)
+<span class="hl-green">  .####.  .####.         </span>  <span class="hl-green">Theme</span>    : Windows 2000 (Birdgito Ed.)
 <span class="hl-green"> .####.    .####.        </span>  <span class="hl-green">Degree</span>   : BCA — Pursuing
 <span class="hl-green">  .######.######.        </span>  <span class="hl-green">College</span>  : SICS, Chitrakoot
 <span class="hl-green">   .############.        </span>  <span class="hl-green">Univ</span>     : MCNUJC, Bhopal
@@ -698,25 +1136,25 @@ neofetch:()=>`
 <span class="hl-green">      .######.           </span>  <span class="hl-green">Stack</span>    : HTML CSS JS Python SQL Bash
 <span class="hl-green">       .####.            </span>  <span class="hl-green">Interests</span>: WebDev · OSINT · Linux
 <span class="hl-green">        .##.             </span>  <span class="hl-dim">──────────────────────────────</span>
-<span class="hl-green">         ..              </span>  <span style="background:#ff5f57;padding:0 7px">&nbsp;</span><span style="background:#febc2e;padding:0 7px">&nbsp;</span><span style="background:#28c840;padding:0 7px">&nbsp;</span><span style="background:#00e5ff;padding:0 7px">&nbsp;</span><span style="background:#c792ea;padding:0 7px">&nbsp;</span><span style="background:#fff;padding:0 7px">&nbsp;</span>
+<span class="hl-green">         ..              </span>  <span style="background:#f05000;padding:0 6px">&nbsp;</span><span style="background:#80b000;padding:0 6px">&nbsp;</span><span style="background:#0080f0;padding:0 6px">&nbsp;</span><span style="background:#f0c000;padding:0 6px">&nbsp;</span><span style="background:#800080;padding:0 6px">&nbsp;</span><span style="background:#000;padding:0 6px">&nbsp;</span>
 `,
 
 contact:()=>`
 <span class="hl-amber">// contact.txt</span>
 <hr class="divider">
   <span class="hl-green">Email</span>    : pankaj@birdgito.in
-  <span class="hl-cyan">LinkedIn</span> : <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
-  <span class="hl-white">GitHub</span>   : <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
-  <span class="hl-amber">Domain</span>   : <a href="https://birdgito.in" style="color:var(--amber)">birdgito.in</a>
+  <span class="hl-cyan">LinkedIn</span> : <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:#0000cc">linkedin.com/in/birdgito</a>
+  <span class="hl-white">GitHub</span>   : <a href="https://github.com/Birdgito" target="_blank" style="color:#0000cc">github.com/Birdgito</a>
+  <span class="hl-amber">Domain</span>   : <a href="https://birdgito.in" style="color:#0000cc">birdgito.in</a>
   <span class="hl-dim">Location</span> : Chitrakoot, Uttar Pradesh, India 🇮🇳
 
   <span class="hl-dim">Open to: internships · freelance · collaborations · open source</span>
 `,
 
 social:()=>`
-  <span class="hl-green">◆</span> GitHub   → <a href="https://github.com/Birdgito" target="_blank" style="color:var(--cyan)">github.com/Birdgito</a>
-  <span class="hl-cyan">◆</span> LinkedIn → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
-  <span class="hl-amber">◆</span> Domain   → <a href="https://birdgito.in" style="color:var(--amber)">birdgito.in</a>
+  <span class="hl-green">◆</span> GitHub   → <a href="https://github.com/Birdgito" target="_blank" style="color:#0000cc">github.com/Birdgito</a>
+  <span class="hl-cyan">◆</span> LinkedIn → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:#0000cc">linkedin.com/in/birdgito</a>
+  <span class="hl-amber">◆</span> Domain   → <a href="https://birdgito.in" style="color:#0000cc">birdgito.in</a>
 `,
 
 'uname -a':()=>`Linux birdgito 6.6.0-birdgito-SMP #1 SMP 2025 x86_64 GNU/Linux`,
@@ -836,13 +1274,13 @@ history:()=>{
 <span class="hl-green">✓  Passion        : <span class="hl-amber">Real</span></span>
 
 <span class="hl-green">Successfully installed pankaj-mishra@latest 🎉</span>
-Connect → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:var(--cyan)">linkedin.com/in/birdgito</a>
+Connect → <a href="https://www.linkedin.com/in/birdgito/" target="_blank" style="color:#0000cc">linkedin.com/in/birdgito</a>
 `,
 
 '^C':()=>'',
 matrix:()=>{ startMatrix(); return '<span class="hl-green">Entering the Matrix... press any key or tap to exit.</span>'; },
 
-banner:()=>`<pre style="color:var(--accent);font-family:'Share Tech Mono',monospace;font-size:clamp(6px,1.15vw,12px);line-height:1.3">
+banner:()=>`<pre style="color:#000080;font-family:'Lucida Console',monospace;font-size:clamp(5px,0.95vw,10px);line-height:1.2">
   ██████╗ ██╗██████╗ ██████╗  ██████╗ ██╗████████╗ ██████╗
   ██╔══██╗██║██╔══██╗██╔══██╗██╔════╝ ██║╚══██╔══╝██╔═══██╗
   ██████╔╝██║██████╔╝██║  ██║██║  ███╗██║   ██║   ██║   ██║
@@ -875,7 +1313,7 @@ function run(raw) {
   block.appendChild(pl);
 
   if (cmd !== '') {
-    const fn = CMDS[cmd] || CMDS[cmd.toLowerCase()] || (()=>`<span class="hl-red">bash: ${esc(cmd)}: command not found</span> <span class="hl-dim">— try <span style="color:var(--accent)">help</span></span>`);
+    const fn = CMDS[cmd] || CMDS[cmd.toLowerCase()] || (()=>`<span class="hl-red">bash: ${esc(cmd)}: command not found</span> <span class="hl-dim">— try <strong>help</strong></span>`);
     const result = fn();
     if (result !== null) {
       const od = document.createElement('div');
@@ -886,6 +1324,7 @@ function run(raw) {
   }
 
   output.appendChild(block);
+  statusL.textContent = 'Last command: ' + (cmd || '(empty)');
 
   // animate fills
   setTimeout(() => {
@@ -894,7 +1333,8 @@ function run(raw) {
     });
   }, 120);
 
-  window.scrollTo(0, document.body.scrollHeight);
+  const tc = document.getElementById('terminal-content');
+  tc.scrollTop = tc.scrollHeight;
 }
 
 function fireCmd(cmd) {
@@ -924,7 +1364,7 @@ function showAC(val) {
 
   const ir = document.getElementById('input-row').getBoundingClientRect();
   acDrop.style.left   = ir.left + 'px';
-  acDrop.style.bottom = (window.innerHeight - ir.top + 4) + 'px';
+  acDrop.style.bottom = (window.innerHeight - ir.top + 2) + 'px';
   acDrop.style.width  = ir.width + 'px';
   acDrop.style.display = 'block';
 }
@@ -957,7 +1397,6 @@ inp.addEventListener('keydown', e => {
     const val = inp.value; inp.value = ''; hideAC(); run(val); return;
   }
 
-  // history (only when AC closed)
   if (e.key === 'ArrowUp' && !acOpen) {
     e.preventDefault();
     histIdx = Math.min(histIdx + 1, cmdHistory.length - 1);
@@ -972,7 +1411,6 @@ inp.addEventListener('keydown', e => {
     return;
   }
 
-  // Tab
   if (e.key === 'Tab') {
     e.preventDefault();
     if (acOpen) {
@@ -987,21 +1425,17 @@ inp.addEventListener('keydown', e => {
     return;
   }
 
-  // Ctrl+L clear
   if (e.ctrlKey && e.key === 'l') { e.preventDefault(); output.innerHTML = ''; return; }
-  // Ctrl+C
   if (e.ctrlKey && e.key === 'c') { e.preventDefault(); run('^C'); inp.value = ''; hideAC(); return; }
 });
 
-// Click outside AC → hide
 document.addEventListener('mousedown', e => { if (!acDrop.contains(e.target)) hideAC(); });
 
-// Click terminal body → focus input
 document.addEventListener('click', e => {
   if (!window.getSelection().toString() &&
       !e.target.closest('a') && !e.target.closest('.qc') &&
-      !e.target.closest('.tb') && !e.target.closest('.ac-item') &&
-      !e.target.closest('.dot')) {
+      !e.target.closest('.tool-btn') && !e.target.closest('.tb-btn') &&
+      !e.target.closest('.ac-item') && !e.target.closest('.btn')) {
     inp.focus();
   }
 });
@@ -1025,9 +1459,8 @@ function startMatrix() {
   function draw() {
     mCtx.fillStyle = 'rgba(0,0,0,0.05)';
     mCtx.fillRect(0, 0, canvas.width, canvas.height);
-    const t = document.body.getAttribute('data-theme');
-    mCtx.fillStyle = t==='amber'?'#ffb700':t==='cyan'?'#00e5ff':'#00ff88';
-    mCtx.font = '13px "Share Tech Mono"';
+    mCtx.fillStyle = '#00ff88';
+    mCtx.font = '13px "Lucida Console"';
     drops.forEach((y,i) => {
       mCtx.fillText(chars[Math.floor(Math.random()*chars.length)], i*15, y*15);
       if (y*15 > canvas.height && Math.random() > .975) drops[i] = 0;
@@ -1049,10 +1482,10 @@ function startMatrix() {
   setTimeout(() => document.addEventListener('click', stop, { once:true }), 400);
 }
 
-/* ═══════════ BOOT AUTO-HELP ═════════════════════════════ */
+/* ═══════════ AUTO-HELP ON LOAD ══════════════════════════ */
 setTimeout(() => {
-  if (document.getElementById('terminal').classList.contains('visible')) run('help');
-}, 3100);
+  if (document.getElementById('desktop').classList.contains('visible')) run('help');
+}, 2800);
 </script>
 </body>
 </html>
